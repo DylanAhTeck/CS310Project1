@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ImHungry | Results</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="./css/results.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
@@ -26,35 +27,6 @@
 	</div>
   </section>
   </body>
-  <script>
-  //Function to get URL Parameters
-  $.urlParam = function(name){
-		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-		return results[1] || 0;
-	}
-  $( document ).ready(function() {
-	  //Making ajax request to YelpApi
-	  var q = $.urlParam('query'); //get search query
-	  var s = $.urlParam('size'); //get number of results 
-	  $('.title').text('Results for ' + q);  //Setting Header to 'Results for [q]'
-	  $.post("./YelpApi",
-			  {
-				  query: q,
-				  size: s
-			  },
-			  function(data, status){
-			    console.log(data);
-			    data.forEach(function(item, i) {
-			    	var html = '<div class="card">' + 
-			    					'<div class="card-content">'+
-			    						'<div class="content">' +
-			    							'<p>' + item.name + '</p>'+
-			    						'</div>'+
-			    					'</div>'+
-			    				'</div>';
-			    	$('#restaurants').append(html);
-			    })
-			  });
-  })
+  <script src="./javascript/results.js">
   </script>
 </html>

@@ -45,9 +45,7 @@ public class YelpApi extends HttpServlet {
 		String size = request.getParameter("size");
 		String latitude = "34.0206";
 		String longitude = "118.2854";
-		System.out.println(query + " " + size);
 		String url = "https://api.yelp.com/v3/businesses/search?location=801%20Childs%20Way,%20Los%20Angeles,%20CA%2090089&term="+ query + "&limit=" + size + "&sort_by=distance";
-		System.out.println(url);
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
