@@ -4,4 +4,15 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>YelpApi</servlet-name>
+  	<display-name>YelpApi</display-name>
+  	<description></description>
+  	<servlet-class>YelpApi</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>YelpApi</servlet-name>
+  	<url-pattern>/YelpApi</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
