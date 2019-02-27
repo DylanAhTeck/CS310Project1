@@ -37,6 +37,9 @@ public class YelpApi extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    
 		Gson gson = new Gson();
 		String query = request.getParameter("query");
 		String size = request.getParameter("size");
@@ -63,8 +66,7 @@ public class YelpApi extends HttpServlet {
 			Type listType = new TypeToken<List<Restaurant>>() {
 		    }.getType();
 			List<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-			System.out.println(restaurants.get(0).getName());
-			response.getWriter().println(gson.toJson(restaurants));
+			response.getWriter().print(gson.toJson(restaurants));
 		}
 	}
 

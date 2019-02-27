@@ -13,8 +13,15 @@
   	<div class="hero-body">
 	    <div class="container has-text-centered">
 	      <h1 class="title">
-	        ImHungry
 	      </h1>
+	      <div class="columns">
+	      	<div class="column" id="restaurants">
+	      		<h2 class="subtitle">Restaurants</h2>
+	      	</div>
+	      	<div class="column" id="recipes">
+	      		<h2 class="subtitle">Recipes</h2>
+	      	</div>
+	      </div>
 	    </div>
 	</div>
   </section>
@@ -29,14 +36,25 @@
 	  //Making ajax request to YelpApi
 	  var q = $.urlParam('query'); //get search query
 	  var s = $.urlParam('size'); //get number of results 
+	  $('.title').text('Results for ' + q);  //Setting Header to 'Results for [q]'
 	  $.post("./YelpApi",
 			  {
-			    query: q,
-			    size: s
+				  query: q,
+				  size: s
 			  },
 			  function(data, status){
-			    alert("Data: " + data + "\nStatus: " + status);
+			    console.log(data);
+			    data.forEach(function(item, i) {
+			    	var html = '<div class="card">' + 
+			    					'<div class="card-content">'+
+			    						'<div class="content">' +
+			    							'<p>' + item.name + '</p>'+
+			    						'</div>'+
+			    					'</div>'+
+			    				'</div>';
+			    	$('#restaurants').append(html);
+			    })
 			  });
-	});
+  })
   </script>
 </html>
