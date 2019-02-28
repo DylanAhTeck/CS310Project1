@@ -26,7 +26,7 @@
   }
   //Function to get driving time
   $.getDrivingTime = function(loc,i) {
-	  var key = 'AIzaSyCdpgAD8kWgEeFD7AY2FMwBAIe_Hz2jITo';
+	  var key = '';
 	  var service = new google.maps.DistanceMatrixService();
 	  var mins = service.getDistanceMatrix(
 	    {
@@ -38,9 +38,9 @@
 			$('.distance_'+i).text(response.rows[0].elements[0].duration.text); //Adding driving time to html
 	    }) 
   }
-  
-  $( document ).ready(function() {
-	  //Making ajax request to YelpApi
+  //Function that returns all restaurant results from YelpApi
+  $.getRestaurantResults = function() {
+	//Making ajax request to YelpApi
 	  var q = $.urlParam('query'); //get search query
 	  var s = $.urlParam('size'); //get number of results 
 	  $('.title').text('Results for ' + q);  //Setting Header to 'Results for [q]'
@@ -83,4 +83,8 @@
 			    	$.getDrivingTime(item.location,i)
 			    })
 			  });
+  }
+  
+  $( document ).ready(function() {
+	  $.getRestaurantResults();
   })
