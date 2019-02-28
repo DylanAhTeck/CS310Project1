@@ -26,7 +26,7 @@
   }
   //Function to get driving time
   $.getDrivingTime = function(loc,i) {
-	  var key = '';
+	  var key = 'AIzaSyCdpgAD8kWgEeFD7AY2FMwBAIe_Hz2jITo';
 	  var service = new google.maps.DistanceMatrixService();
 	  var mins = service.getDistanceMatrix(
 	    {
@@ -85,6 +85,26 @@
 			  });
   }
   
+  $.getGoogleImages = function() {
+	  var q = $.urlParam('query'); //get search query
+	  var s = $.urlParam('size');
+	  $.post("./GoogleServlet",
+			  {
+				  query: q,
+			  },
+			  function(data, status){
+			    console.log(data);
+			    data.items.forEach(function(item, i){
+			    	var rotation = Math.floor(Math.random() * (90)) -45;
+			    	var html = '<img class="food-image" src="' + item.link +'" width="20%" style="transform: rotate(' + rotation +'deg)"/>';
+			    	
+			    	$('.image-container').append(html);
+			    	console.log(rotation);
+			    })
+			  });
+  }
+  
   $( document ).ready(function() {
 	  $.getRestaurantResults();
+	  $.getGoogleImages();
   })

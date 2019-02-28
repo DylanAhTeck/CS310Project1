@@ -8,3 +8,8 @@ body {
 .dollar-signs {
 	width: 0.75rem;
 }
+
+.image-container {
+	width: 50vw;
+	height: 35vh;
+}

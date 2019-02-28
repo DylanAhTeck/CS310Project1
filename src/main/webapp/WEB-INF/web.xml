@@ -10,9 +10,29 @@
   	<description></description>
   	<servlet-class>YelpApi</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>SpoonacularApi</servlet-name>
+  	<display-name>SpoonacularApi</display-name>
+  	<description></description>
+  	<servlet-class>SpoonacularApi</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>GoogleServlet</servlet-name>
+  	<display-name>GoogleServlet</display-name>
+  	<description></description>
+  	<servlet-class>GoogleServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>YelpApi</servlet-name>
   	<url-pattern>/YelpApi</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>SpoonacularApi</servlet-name>
+  	<url-pattern>/SpoonacularApi</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>GoogleServlet</servlet-name>
+  	<url-pattern>/GoogleServlet</url-pattern>
   </servlet-mapping>
   
 </web-app>
