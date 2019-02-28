@@ -1,4 +1,4 @@
-  //Function to get URL Parameters
+//Function to get URL Parameters
   $.urlParam = function(name){
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 		return results[1] || 0;
@@ -84,7 +84,7 @@
 			    })
 			  });
   }
-  
+  //Function to get 10 images from google
   $.getGoogleImages = function() {
 	  var q = $.urlParam('query'); //get search query
 	  var s = $.urlParam('size');
@@ -93,18 +93,46 @@
 				  query: q,
 			  },
 			  function(data, status){
-			    console.log(data);
 			    data.items.forEach(function(item, i){
 			    	var rotation = Math.floor(Math.random() * (90)) -45;
-			    	var html = '<img class="food-image" src="' + item.link +'" width="20%" style="transform: rotate(' + rotation +'deg)"/>';
+			    	var html = '<img class="food-image" src="' + item.link +'" width="100%" style="transform: rotate(' + rotation +'deg)"/>';
 			    	
-			    	$('.image-container').append(html);
+			    	$('#image'+ i).append(html);
 			    	console.log(rotation);
 			    })
-			  });
+			  })
   }
   
   $( document ).ready(function() {
 	  $.getRestaurantResults();
 	  $.getGoogleImages();
+	  var selectedList = '';
+	  $('.dropdown-trigger').click(function() {
+		  $('.dropdown').addClass('is-active');
+	  })
+	  
+	  $('#favorites').click(function() {
+		  selectedList = 'Favorites';
+		  $('#dropdown-title').text(selectedList);
+		  $(this).addClass('is-active');
+		  $('.dropdown').removeClass('is-active');
+		  $('#explore').removeClass('is-active');
+		  $('#do-not-show').removeClass('is-active');
+	  })
+	  $('#explore').click(function() {
+		  selectedList = 'To Explore';
+		  $('#dropdown-title').text(selectedList);
+		  $(this).addClass('is-active');
+		  $('.dropdown').removeClass('is-active');
+		  $('#favorites').removeClass('is-active');
+		  $('#do-not-show').removeClass('is-active');
+	  })
+	  $('#do-not-show').click(function() {
+		  selectedList = 'Do Not Show';
+		  $('#dropdown-title').text(selectedList);
+		  $(this).addClass('is-active');
+		  $('.dropdown').removeClass('is-active');
+		  $('#favorites').removeClass('is-active');
+		  $('#explore').removeClass('is-active');
+	  })
   })
