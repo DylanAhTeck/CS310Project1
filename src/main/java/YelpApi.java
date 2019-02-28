@@ -31,20 +31,9 @@ public class YelpApi extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.setContentType("application/json");
-	    response.setCharacterEncoding("UTF-8");
-	    
-		Gson gson = new Gson();
-		String query = request.getParameter("query");
-		String size = request.getParameter("size");
-		String latitude = "34.0206";
-		String longitude = "118.2854";
+    
+    public String getYelpApiResults(String query, String size) throws IOException {
+    	Gson gson = new Gson();
 		String url = "https://api.yelp.com/v3/businesses/search?location=801%20Childs%20Way,%20Los%20Angeles,%20CA%2090089&term="+ query + "&limit=" + size + "&sort_by=distance";
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -64,8 +53,23 @@ public class YelpApi extends HttpServlet {
 			Type listType = new TypeToken<List<Restaurant>>() {
 		    }.getType();
 			List<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-			response.getWriter().print(gson.toJson(restaurants));
+			return gson.toJson(restaurants);
 		}
+		return "Failed to reach Yelp";
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    
+		String query = request.getParameter("query");
+		String size = request.getParameter("size");
+		
+		response.getWriter().print(getYelpApiResults(query, size));
 	}
 
 	/**

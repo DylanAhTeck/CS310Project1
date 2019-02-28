@@ -4,3 +4,7 @@
 body {
 	overflow-y:scroll;
 }
+
+.dollar-signs {
+	width: 0.75rem;
+}

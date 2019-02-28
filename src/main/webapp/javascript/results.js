@@ -16,9 +16,27 @@
 	  if(price == null) return '';
 	  var signs = '';
 	  for(i=0; i<price.length; i ++) {
-		  signs += '<span class="icon has-text-success"><i class="fas fa-dollar-sign"></i></span>'
+		  signs += '<span class="icon has-text-success dollar-signs"><i class="fas fa-dollar-sign"></i></span>'
 	  }
 	  return signs
+  }
+  //Function to turn location object into string
+  $.getAddress = function(loc) {
+	  return (loc.address1 + ", " + loc.city + ", " + loc.state + " " + loc.zip_code);
+  }
+  //Function to get driving time
+  $.getDrivingTime = function(loc,i) {
+	  var key = 'AIzaSyCdpgAD8kWgEeFD7AY2FMwBAIe_Hz2jITo';
+	  var service = new google.maps.DistanceMatrixService();
+	  var mins = service.getDistanceMatrix(
+	    {
+	      origins: ['Tommy Trojan'],
+	      destinations: [$.getAddress(loc)],
+	      travelMode: 'DRIVING',
+	    }, function(response, status) {
+	    	console.log(response.rows[0].elements[0].duration.text)
+			$('.distance_'+i).text(response.rows[0].elements[0].duration.text); //Adding driving time to html
+	    }) 
   }
   
   $( document ).ready(function() {
@@ -34,18 +52,24 @@
 			  function(data, status){
 			    console.log(data);
 			    data.forEach(function(item, i) {
-			    	var html = '<div class="card">' + 
+			    	var color = '';
+			    	if(i%2 != 0) { //if index is odd make it gray
+			    		color = 'has-background-white-ter'
+			    	}
+			    	var html = '<div class="card ' + color +' ">' + 
 			    					'<div class="card-content">'+
 			    						'<div class="content">' +
-			    							'<div class="level">'+
-			    								'<div class="level-left">'+
-			    									'<div class="level-item">'+
-			    										'<div>' + item.name + ' ' + $.getStars(item.rating) + '</div>'+
+			    							'<div class="columns">'+
+			    								'<div class="column is-four-fifths">'+
+			    									'<div class="has-text-left">'+
+			    										'<p>' + item.name + ' ' + $.getStars(item.rating) + '</p>'+
+			    										'<p class="distance_'+i+'"></p>'+
+			    										'<p>' + $.getAddress(item.location) + '</p>'+
 			    									'</div>'+
 			    								'</div>'+
-			    								'<div class="level-right">'+
-			    									'<div class="level-item">'+
-			    										'<p>' +$.getPrice(item.price) + '</p>' +
+			    								'<div class="column is-one-fifth">'+
+			    									'<div class="has-text-right">'+
+			    										'<p>' + $.getPrice(item.price) + '</p>' +
 			    									'</div>'+
 			    								'</div>'+
 			    							'</div>'+
@@ -56,6 +80,7 @@
 	    							'</footer>'+
 			    				'</div>';
 			    	$('#restaurants').append(html);
+			    	$.getDrivingTime(item.location,i)
 			    })
 			  });
   })

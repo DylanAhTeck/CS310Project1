@@ -1,6 +1,7 @@
 
 public class Restaurant {
 	String name;
+	Location location;
 	String address;
 	int rating;
 	float distance;
@@ -8,9 +9,9 @@ public class Restaurant {
 	String phone;
 	String url;
 	
-	public Restaurant(String alias, String address, int rating, float distance, String price, String phone, String url) {
-		this.name = alias;
-		this.address = address;
+	public Restaurant(String name, Location location, int rating, float distance, String price, String phone, String url) {
+		this.name = name;
+		this.location = location;
 		this.rating = rating;
 		this.distance = distance;
 		this.price = price;
