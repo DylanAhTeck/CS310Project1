@@ -2,18 +2,20 @@
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.InputStreamReader;
@@ -32,8 +34,11 @@ public class YelpApi extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    public String getYelpApiResults(String query, String size) throws IOException {
-    	Gson gson = new Gson();
+    public String getYelpApiResults(String query, String size, Cookie[] cookies) throws IOException {
+    	Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create();
 		String url = "https://api.yelp.com/v3/businesses/search?location=801%20Childs%20Way,%20Los%20Angeles,%20CA%2090089&term="+ query + "&limit=" + size + "&sort_by=distance";
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -50,9 +55,26 @@ public class YelpApi extends HttpServlet {
 			in.close();
 			
 			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
-			Type listType = new TypeToken<List<Restaurant>>() {
+			Type listType = new TypeToken<ArrayList<Restaurant>>() {
 		    }.getType();
-			List<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
+			ArrayList<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
+			if(cookies != null) {
+				System.out.println("Hello");
+				for(Restaurant r : restaurants) {
+					for( int i = 0; i < cookies.length; i++) {
+						String list = cookies[i].getName();
+						ArrayList<Restaurant> restaurantsOnList = gson.fromJson(cookies[i].getValue(), listType);
+						for(Restaurant r2 : restaurantsOnList) {
+							if(r.getName() == r2.getName()) {
+								if(list == "Favorites") {
+									restaurants.remove(r);
+									restaurants.add(0, r);
+								}
+							}
+						}
+					}
+				}
+			}
 			return gson.toJson(restaurants);
 		}
 		return "Failed to reach Yelp";
@@ -65,11 +87,13 @@ public class YelpApi extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
+	    //Get cookies to see if any restaurants are on any lists
+	    Cookie[] cookies = request.getCookies();
 	    
 		String query = request.getParameter("query");
 		String size = request.getParameter("size");
 		
-		response.getWriter().print(getYelpApiResults(query, size));
+		response.getWriter().print(getYelpApiResults(query, size, cookies));
 	}
 
 	/**

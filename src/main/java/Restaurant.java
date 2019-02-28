@@ -2,7 +2,6 @@
 public class Restaurant {
 	String name;
 	Location location;
-	String address;
 	int rating;
 	float distance;
 	String price;
@@ -21,10 +20,6 @@ public class Restaurant {
 	
 	public String getName() {
 		return this.name;
-	}
-	
-	public String getAddress() {
-		return this.address;
 	}
 	
 	public int getRatins() {

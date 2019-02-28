@@ -35,12 +35,10 @@ public class GoogleServlet extends HttpServlet {
     	String cx = "017921781541195813540:qxb5prra6vs";
     	Gson gson = new Gson();
 		String url = "https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&q="+query+"&searchType=image&num=10";
-		System.out.println(url);
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-		System.out.println(responseCode);
 		if(responseCode == 200) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -49,7 +47,6 @@ public class GoogleServlet extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
-			System.out.println(resp.toString());
 			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
 			return resp.toString();
 			/*Type listType = new TypeToken<List<Restaurant>>() {

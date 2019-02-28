@@ -1,3 +1,4 @@
+var selectedList = '';
 //Function to get URL Parameters
   $.urlParam = function(name){
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -76,11 +77,35 @@
 			    						'</div>'+
 			    					'</div>'+
 			    					'<footer class="card-footer">'+
-	    								'<a class="card-footer-item">Add To List</a>'+
+	    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
 	    							'</footer>'+
 			    				'</div>';
 			    	$('#restaurants').append(html);
 			    	$.getDrivingTime(item.location,i)
+			    	$('#restaurant'+i).click(function(){
+			    		if(selectedList != ''){
+			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
+			    			var currentList = [];
+			    			if (Cookies.get(selectedList) == null) {
+			    				currentList = [];
+			    			} else {
+			    				currentList = JSON.parse(Cookies.get(selectedList));
+			    			}
+			    			var alreadyInList = false;
+			    			currentList.forEach(function(restaurant, i) {
+			    				console.log(JSON.parse(restaurant))
+			    				if(JSON.parse(restaurant).name == item.name) {
+			    					alreadyInList = true;
+			    					console.log(item.name + ' already in ' + selectedList)
+			    				}
+			    			})
+			    			if(!alreadyInList) {
+			    				currentList.push(JSON.stringify(item));
+			    			}
+			    			Cookies.set(selectedList, currentList);
+			    			console.log(JSON.parse(Cookies.get(selectedList)));
+			    		}
+			    	})
 			    })
 			  });
   }
@@ -98,15 +123,14 @@
 			    	var html = '<img class="food-image" src="' + item.link +'" width="100%" style="transform: rotate(' + rotation +'deg)"/>';
 			    	
 			    	$('#image'+ i).append(html);
-			    	console.log(rotation);
 			    })
 			  })
   }
   
   $( document ).ready(function() {
+	  console.log(Cookies.get());
 	  $.getRestaurantResults();
 	  $.getGoogleImages();
-	  var selectedList = '';
 	  $('.dropdown-trigger').click(function() {
 		  $('.dropdown').addClass('is-active');
 	  })
