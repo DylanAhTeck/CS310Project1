@@ -45,13 +45,21 @@ var selectedList = '';
 	  var q = $.urlParam('query'); //get search query
 	  var s = $.urlParam('size'); //get number of results 
 	  $('.title').text('Results for ' + q);  //Setting Header to 'Results for [q]'
+	  var favs = [];
+	  var doNotShow = [];
 	  $.post("./YelpApi",
 			  {
 				  query: q,
-				  size: s
+				  size: s,
 			  },
 			  function(data, status){
 			    console.log(data);
+			    data.forEach(function(item, i){
+			    	if(Cookies.get(item.alias) == 'Favorites'){
+			    		data.splice(i, 1);
+			    		data.unshift(item);
+			    	}
+			    });
 			    data.forEach(function(item, i) {
 			    	var color = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
@@ -85,25 +93,13 @@ var selectedList = '';
 			    	$('#restaurant'+i).click(function(){
 			    		if(selectedList != ''){
 			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
-			    			var currentList = [];
-			    			if (Cookies.get(selectedList) == null) {
-			    				currentList = [];
+			    			if(Cookies.get(item.alias) == null) {
+			    				Cookies.set(item.alias, selectedList);
+			    				console.log('Added ' + item.name + ' to ' + selectedList);
 			    			} else {
-			    				currentList = JSON.parse(Cookies.get(selectedList));
+			    				console.log(item.name + ' is already on ' + Cookies.get(item.alias));
 			    			}
-			    			var alreadyInList = false;
-			    			currentList.forEach(function(restaurant, i) {
-			    				console.log(JSON.parse(restaurant))
-			    				if(JSON.parse(restaurant).name == item.name) {
-			    					alreadyInList = true;
-			    					console.log(item.name + ' already in ' + selectedList)
-			    				}
-			    			})
-			    			if(!alreadyInList) {
-			    				currentList.push(JSON.stringify(item));
-			    			}
-			    			Cookies.set(selectedList, currentList);
-			    			console.log(JSON.parse(Cookies.get(selectedList)));
+			    			
 			    		}
 			    	})
 			    })

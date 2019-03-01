@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -34,7 +35,7 @@ public class YelpApi extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    public String getYelpApiResults(String query, String size, Cookie[] cookies) throws IOException {
+    public String getYelpApiResults(String query, String size, ArrayList<Restaurant> favoritesList, ArrayList<Restaurant> doNotShowList) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
@@ -58,22 +59,15 @@ public class YelpApi extends HttpServlet {
 			Type listType = new TypeToken<ArrayList<Restaurant>>() {
 		    }.getType();
 			ArrayList<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-			if(cookies != null) {
-				System.out.println("Hello");
-				for(Restaurant r : restaurants) {
-					for( int i = 0; i < cookies.length; i++) {
-						String list = cookies[i].getName();
-						ArrayList<Restaurant> restaurantsOnList = gson.fromJson(cookies[i].getValue(), listType);
-						for(Restaurant r2 : restaurantsOnList) {
-							if(r.getName() == r2.getName()) {
-								if(list == "Favorites") {
-									restaurants.remove(r);
-									restaurants.add(0, r);
-								}
-							}
+			for(Restaurant r : restaurants) {
+				if(favoritesList != null) {
+					for(Restaurant favRestaurant: favoritesList) {
+						if(r.getName() == favRestaurant.getName()) {
+							restaurants.remove(r);
+							restaurants.add(0, r);
 						}
 					}
-				}
+				}	
 			}
 			return gson.toJson(restaurants);
 		}
@@ -87,13 +81,21 @@ public class YelpApi extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
-	    //Get cookies to see if any restaurants are on any lists
-	    Cookie[] cookies = request.getCookies();
-	    
+	    Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create();
 		String query = request.getParameter("query");
 		String size = request.getParameter("size");
-		
-		response.getWriter().print(getYelpApiResults(query, size, cookies));
+		String favorites = request.getParameter("favorites");
+		Type listType = new TypeToken<ArrayList<Restaurant>>() {
+	    }.getType();
+	    System.out.println(favorites);
+	    JsonArray json = new Gson().fromJson(favorites, JsonArray.class);
+	    System.out.println(json);
+		ArrayList<Restaurant> favoritesList = gson.fromJson(json, listType);
+		ArrayList<Restaurant> doNotShowList = gson.fromJson(request.getParameter("doNotShow"), listType);
+		response.getWriter().print(getYelpApiResults(query, size, favoritesList, doNotShowList));
 	}
 
 	/**

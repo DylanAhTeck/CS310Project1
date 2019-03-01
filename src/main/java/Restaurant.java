@@ -1,5 +1,6 @@
 
 public class Restaurant {
+	String alias;
 	String name;
 	Location location;
 	int rating;
