@@ -71,7 +71,7 @@ var selectedList = '';
 	//Making ajax request to YelpApi
 	  var q = $.urlParam('query'); //get search query
 	  var s = $.urlParam('size'); //get number of results 
-	  $('.title').text('Results for ' + q);  //Setting Header to 'Results for [q]'
+	  $('.title').text('Results for ' + q.split('+').join(' '));  //Setting Header to 'Results for [q]'
 	  $.post("./YelpApi",
 			  {
 				  query: q,
@@ -158,7 +158,7 @@ var selectedList = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'
 					    	}
-					    	var html = '<div class="card ' + color +' ">' + 
+					    	var html = '<div class="card ' + color +' "id="'+item.id+'">' + 
 					    					'<div class="card-content">'+
 					    						'<div class="content">' +
 					    							'<div class="columns">'+
@@ -182,6 +182,19 @@ var selectedList = '';
 			    							'</footer>'+
 					    				'</div>';
 					    	$('#recipes').append(html);
+					    	$('#'+item.id).click(function() {
+					    		var id = "id="+item.id +"&";
+					    		var title = "title=" + item.title +"&";
+					    		var image = "image=" + item.image + "&";
+					    		var ingredients = "ingredients=" +JSON.stringify(item.extendedIngredients) + "&";
+					    		var instructions = "instructions=" + item.instructions + "&";
+					    		var prepTime = "prepTime=" + item.preparationMinutes + "&";
+					    		var cookTime = "cookTime=" + item.cookingMinutes + "&";
+					    		var readyTime = "readyTime=" + item.readyInMinutes + "&";
+					    		var url =  "./recipe.html?" + id + title + image + ingredients + instructions + prepTime + cookTime + readyTime;
+					    		
+					    		window.location.href = url;
+					    	})
 					    	$('#recipe'+i).click(function(){
 					    		if(selectedList != ''){
 					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);

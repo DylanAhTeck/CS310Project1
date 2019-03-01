@@ -81,6 +81,7 @@ public class SpoonacularApi extends HttpServlet {
 		con.setRequestMethod("GET");
 		con.setRequestProperty("X-RapidAPI-Key", "0338cd7961msh20c35cdb444b4aap17b509jsn7f4c40a7e81a");
 		int responseCode = con.getResponseCode();
+		System.out.println(responseCode);
 		if(responseCode == 200) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
