@@ -18,7 +18,7 @@ var selectedList = '';
 	  var stars = (rating/100) * 5;
 	  var fullStars = Math.floor(stars);
 	  var halfStars = 0;
-	  if(fullStars % 1 != 0) {
+	  if(stars % 1 != 0) {
 		  halfStars = 1;
 	  }
 	  for(var i = 0; i < fullStars; i++ ) {
@@ -55,6 +55,16 @@ var selectedList = '';
 	    	console.log(response.rows[0].elements[0].duration.text)
 			$('.distance_'+i).text(response.rows[0].elements[0].duration.text); //Adding driving time to html
 	    }) 
+  }
+  //Function that returns the prep time and cook time or ready in minutes
+  $.getCookTime = function(prep, cook, ready) {
+	  var time = '';
+	  if(prep != null && cook != null) {
+		  time = 'Prep Time: ' + prep + ' minutes Cook Time: ' + cook + ' minutes'
+	  } else {
+		  time = 'Ready in ' + ready + ' minutes'
+	  }
+	  return time;
   }
   //Function that returns all restaurant results from YelpApi
   $.getRestaurantResults = function() {
@@ -152,16 +162,16 @@ var selectedList = '';
 					    					'<div class="card-content">'+
 					    						'<div class="content">' +
 					    							'<div class="columns">'+
-					    								'<div class="column is-four-fifths">'+
+					    								'<div class="column is-three-fifths">'+
 					    									'<div class="has-text-left">'+
-					    										'<p>' + item.title + ' ' + $.getStarsRecipe(item.spoonacularScore) + '</p>'+
+					    										'<p>' + item.title + '</p>'+
 					    										'<p></p>'+
-					    										'<p>' + '</p>'+
+					    										'<p>' + $.getCookTime(item.preparationMinutes, item.cookingMinutes, item.readyInMinutes) + '</p>'+
 					    									'</div>'+
 					    								'</div>'+
-					    								'<div class="column is-one-fifth">'+
+					    								'<div class="column is-two-fifths">'+
 					    									'<div class="has-text-right">'+
-					    										'<p>' + $.getPrice(item.price) + '</p>' +
+					    										'<p>' + $.getStarsRecipe(item.spoonacularScore) + '</p>' +
 					    									'</div>'+
 					    								'</div>'+
 					    							'</div>'+

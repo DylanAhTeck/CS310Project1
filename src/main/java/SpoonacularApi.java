@@ -74,7 +74,8 @@ public class SpoonacularApi extends HttpServlet {
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
-		String url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?query="+query+"&number="+size;
+		String url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?number="+size+"&query="+query;
+		System.out.println(url);
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
@@ -88,6 +89,7 @@ public class SpoonacularApi extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
+			System.out.println("Spoonacular recipe ids = " + resp.toString());
 			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
 			JsonArray recipeIds = json.getAsJsonArray("results");
 			ArrayList<String> ids = new ArrayList<String>();
@@ -99,7 +101,7 @@ public class SpoonacularApi extends HttpServlet {
 			
 			return getRecipeApiResultsHelper(ids);
 		}
-		return "Failed to reach Yelp";
+		return "Failed to reach Spoonacular";
     }
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -114,6 +116,7 @@ public class SpoonacularApi extends HttpServlet {
                 .create();
 		String query = request.getParameter("query");
 		String size = request.getParameter("size");
+		System.out.println("Making request to Spoonacular for " + query);
 		
 		response.getWriter().print(getRecipeApiResults(query, size));
 	}
