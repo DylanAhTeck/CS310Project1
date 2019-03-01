@@ -1,12 +1,8 @@
-var id = '';
-var title = '';
-var image = '';
-var ingredients = [];
-var instructions = [];
-var cookTime;
-var prepTime;
-var readyTime = '';
-var selectedList = '';
+var id;
+var name;
+var address;
+var phone;
+var website;
 
 //Function to decode URL Parameters
 $.urlParam = function(name){
@@ -15,39 +11,21 @@ $.urlParam = function(name){
 	}
 //Function to get parameters from URL
 $.getParams = function() {
-	id = $.urlParam('id');
-	title = decodeURI($.urlParam('title'));
-	ingredients = JSON.parse(decodeURI($.urlParam('ingredients')));
-	image = $.urlParam('image');
-	instructions = decodeURI($.urlParam('instructions')).split('.');
-	cookTime = $.urlParam('cookTime');
-	prepTime = $.urlParam('prepTime');
-	readyTime = $.urlParam('readyTime');
+	id = decodeURI($.urlParam('id'));
+	name = decodeURI($.urlParam('name'));
+	address = decodeURI($.urlParam('address'));
+	phone = decodeURI($.urlParam('phone'));
+	website = decodeURI($.urlParam('website'));
 }
 
 //function to render the recipe details
-$.renderRecipe = function() {
-	$('#recipe-title').text(title);
-	$('#recipe-image').html('<img src="' + image + '" />');
-	if(prepTime != "null" && cookTime != "null") {
-		$('#recipe-prep-time').text('Prep Time: ' + prepTime + ' minute(s)');
-		$('#recipe-cook-time').text('Cook Time: ' + cookTime + ' minute(s)');
-	} else {
-		$('#recipe-prep-time').text('Ready in ' + readyTime + ' minute(s)');
-	}
-	var ingredientsList = '';
-	ingredients.forEach(function(item, i) {
-		ingredientsList += '<li>'+item.originalString+'</li>'
-	})
-	$('#ingredients').html(ingredientsList);
-	var instructionsList = '';
-	instructions.forEach(function(item, i) {
-		if(item != ""){
-			instructionsList += '<li>'+item+'</li>';
-		}	
-	})
-	$('#instructions').html(instructionsList);
-	
+$.renderRestaurant = function() {
+	$('#restaurant-name').text(name);
+	$('#restaurant-address').text(address);
+	$('#restaurant-phone-number').text(phone);
+	$('#restaurant-link').text(website);
+	$('#restaurant-link').attr('href', website);
+	$('#restaurant-address').attr('href', 'https://www.google.com/maps/dir/Tommy+Trojan,+801-899+Childs+Way,+Los+Angeles,+CA+90089/'+address);
 }
 
 $.addToList = function() {
@@ -67,7 +45,7 @@ $.addToList = function() {
 
 $( document ).ready(function() {
 	$.getParams();
-	$.renderRecipe();
+	$.renderRestaurant();
 	$.addToList();
 	$('.dropdown-trigger').click(function() {
 	  $('.dropdown').addClass('is-active');
@@ -97,4 +75,6 @@ $( document ).ready(function() {
 	  $('#favorites').removeClass('is-active');
 	  $('#explore').removeClass('is-active');
 	 })
-  })
+  })/**
+ * 
+ */

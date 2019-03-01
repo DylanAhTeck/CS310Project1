@@ -93,7 +93,7 @@ var selectedList = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
 			    		color = 'has-background-white-ter'
 			    	}
-			    	var html = '<div class="card ' + color +' ">' + 
+			    	var html = '<div class="card ' + color +' " id="' + item.alias + '">' + 
 			    					'<div class="card-content">'+
 			    						'<div class="content">' +
 			    							'<div class="columns">'+
@@ -118,6 +118,18 @@ var selectedList = '';
 			    				'</div>';
 			    	$('#restaurants').append(html);
 			    	$.getDrivingTime(item.location,i)
+			    	$('#'+item.alias).click(function() {
+					    		var id = "id="+item.alias +"&";
+					    		var name = "name=" + item.name +"&";
+					    		var address = "address=" + $.getAddress(item.location) + "&";
+					    		var phone = "phone=" + item.phone + "&";
+					    		var link = encodeURIComponent(item.url);
+					    		console.log(link);
+					    		var website = "website=" + link;
+					    		var url =  "./restaurant.html?" + id + name + address + phone + website;
+					    		
+					    		window.location.href = url;
+					  })
 			    	$('#restaurant'+i).click(function(){
 			    		if(selectedList != ''){
 			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
