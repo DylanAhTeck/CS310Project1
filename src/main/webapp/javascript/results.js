@@ -4,13 +4,30 @@ var selectedList = '';
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 		return results[1] || 0;
 	}
-  //Function to render star rating
+  //Function to render star rating for restaurants
   $.getStars = function(rating) {
 	  var stars = '';
 	  for(var i = 0; i < rating; i++ ) {
 		  stars += '<span class="icon has-text-info"><i class="fas fa-star"></i></span>'
 	  }
 	  return stars;
+  }
+  //Function to render star ratings for recipe
+  $.getStarsRecipe = function(rating) {
+	  var render = '';
+	  var stars = (rating/100) * 5;
+	  var fullStars = Math.floor(stars);
+	  var halfStars = 0;
+	  if(fullStars % 1 != 0) {
+		  halfStars = 1;
+	  }
+	  for(var i = 0; i < fullStars; i++ ) {
+		  render += '<span class="icon has-text-info"><i class="fas fa-star"></i></span>'
+	  }
+	  if(halfStars == 1) {
+		  render += '<span class="icon has-text-info"><i class="fas fa-star-half-alt"></i></span>'
+	  }
+	  return render;
   }
   //Function to render pricing
   $.getPrice = function(price) {
@@ -45,8 +62,6 @@ var selectedList = '';
 	  var q = $.urlParam('query'); //get search query
 	  var s = $.urlParam('size'); //get number of results 
 	  $('.title').text('Results for ' + q);  //Setting Header to 'Results for [q]'
-	  var favs = [];
-	  var doNotShow = [];
 	  $.post("./YelpApi",
 			  {
 				  query: q,
@@ -58,6 +73,9 @@ var selectedList = '';
 			    	if(Cookies.get(item.alias) == 'Favorites'){
 			    		data.splice(i, 1);
 			    		data.unshift(item);
+			    	}
+			    	if(Cookies.get(item.alias) == 'Do Not Show'){
+			    		data.splice(i, 1);
 			    	}
 			    });
 			    data.forEach(function(item, i) {
@@ -105,6 +123,70 @@ var selectedList = '';
 			    })
 			  });
   }
+  $.getRecipeResults = function() {
+		//Making ajax request to YelpApi
+		  var q = $.urlParam('query'); //get search query
+		  var s = $.urlParam('size'); //get number of results 
+		  $.post("./SpoonacularApi",
+				  {
+					  query: q,
+					  size: s,
+				  },
+				  function(data, status){
+					  console.log(data);
+					    data.forEach(function(item, i){
+					    	if(Cookies.get(item.id) == 'Favorites'){
+					    		data.splice(i, 1);
+					    		data.unshift(item);
+					    	}
+					    	if(Cookies.get(item.id) == 'Do Not Show'){
+					    		data.splice(i, 1);
+					    	}
+					    });
+					    data.forEach(function(item, i) {
+					    	var color = '';
+					    	if(i%2 != 0) { //if index is odd make it gray
+					    		color = 'has-background-white-ter'
+					    	}
+					    	var html = '<div class="card ' + color +' ">' + 
+					    					'<div class="card-content">'+
+					    						'<div class="content">' +
+					    							'<div class="columns">'+
+					    								'<div class="column is-four-fifths">'+
+					    									'<div class="has-text-left">'+
+					    										'<p>' + item.title + ' ' + $.getStarsRecipe(item.spoonacularScore) + '</p>'+
+					    										'<p></p>'+
+					    										'<p>' + '</p>'+
+					    									'</div>'+
+					    								'</div>'+
+					    								'<div class="column is-one-fifth">'+
+					    									'<div class="has-text-right">'+
+					    										'<p>' + $.getPrice(item.price) + '</p>' +
+					    									'</div>'+
+					    								'</div>'+
+					    							'</div>'+
+					    						'</div>'+
+					    					'</div>'+
+					    					'<footer class="card-footer">'+
+			    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
+			    							'</footer>'+
+					    				'</div>';
+					    	$('#recipes').append(html);
+					    	$('#recipe'+i).click(function(){
+					    		if(selectedList != ''){
+					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);
+					    			if(Cookies.get(item.id) == null) {
+					    				Cookies.set(item.id, selectedList);
+					    				console.log('Added ' + item.title + ' to ' + selectedList);
+					    			} else {
+					    				console.log(item.title + ' is already on ' + Cookies.get(item.id));
+					    			}
+					    			
+					    		}
+					    	})
+					    })
+				  });
+	  }
   //Function to get 10 images from google
   $.getGoogleImages = function() {
 	  var q = $.urlParam('query'); //get search query
@@ -126,6 +208,7 @@ var selectedList = '';
   $( document ).ready(function() {
 	  console.log(Cookies.get());
 	  $.getRestaurantResults();
+	  $.getRecipeResults();
 	  $.getGoogleImages();
 	  $('.dropdown-trigger').click(function() {
 		  $('.dropdown').addClass('is-active');

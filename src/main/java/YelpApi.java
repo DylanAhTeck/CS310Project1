@@ -35,7 +35,7 @@ public class YelpApi extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    public String getYelpApiResults(String query, String size, ArrayList<Restaurant> favoritesList, ArrayList<Restaurant> doNotShowList) throws IOException {
+    public String getYelpApiResults(String query, String size) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
@@ -59,16 +59,7 @@ public class YelpApi extends HttpServlet {
 			Type listType = new TypeToken<ArrayList<Restaurant>>() {
 		    }.getType();
 			ArrayList<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-			for(Restaurant r : restaurants) {
-				if(favoritesList != null) {
-					for(Restaurant favRestaurant: favoritesList) {
-						if(r.getName() == favRestaurant.getName()) {
-							restaurants.remove(r);
-							restaurants.add(0, r);
-						}
-					}
-				}	
-			}
+		
 			return gson.toJson(restaurants);
 		}
 		return "Failed to reach Yelp";
@@ -87,15 +78,8 @@ public class YelpApi extends HttpServlet {
                 .create();
 		String query = request.getParameter("query");
 		String size = request.getParameter("size");
-		String favorites = request.getParameter("favorites");
-		Type listType = new TypeToken<ArrayList<Restaurant>>() {
-	    }.getType();
-	    System.out.println(favorites);
-	    JsonArray json = new Gson().fromJson(favorites, JsonArray.class);
-	    System.out.println(json);
-		ArrayList<Restaurant> favoritesList = gson.fromJson(json, listType);
-		ArrayList<Restaurant> doNotShowList = gson.fromJson(request.getParameter("doNotShow"), listType);
-		response.getWriter().print(getYelpApiResults(query, size, favoritesList, doNotShowList));
+		
+		response.getWriter().print(getYelpApiResults(query, size));
 	}
 
 	/**
