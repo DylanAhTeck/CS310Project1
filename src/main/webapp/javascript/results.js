@@ -89,13 +89,14 @@ var selectedList = '';
 			    	}
 			    });
 			    data.forEach(function(item, i) {
+			    	if(i >= s) return;
 			    	var color = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
 			    		color = 'has-background-white-ter'
 			    	}
 			    	//the restaurant card that holds the restaurant info
-			    	var html = '<div class="card ' + color +' " id="' + item.alias + '">' + 
-			    					'<div class="card-content">'+
+			    	var html = '<div class="card ' + color +' ">' + 
+			    					'<div class="card-content" id="'+item.alias+'">'+
 			    						'<div class="content">' +
 			    							'<div class="columns">'+
 			    								'<div class="column is-four-fifths">'+
@@ -113,9 +114,6 @@ var selectedList = '';
 			    							'</div>'+
 			    						'</div>'+
 			    					'</div>'+
-			    					'<footer class="card-footer">'+
-	    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
-	    							'</footer>'+
 			    				'</div>';
 			    	$('#restaurants').append(html);
 			    	//Calling function to get driving time
@@ -194,9 +192,6 @@ var selectedList = '';
 					    							'</div>'+
 					    						'</div>'+
 					    					'</div>'+
-					    					'<footer class="card-footer">'+
-			    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
-			    							'</footer>'+
 					    				'</div>';
 					    	$('#recipes').append(html);
 					    	$('#'+item.id).click(function() {

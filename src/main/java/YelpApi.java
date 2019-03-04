@@ -40,7 +40,7 @@ public class YelpApi extends HttpServlet {
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
-		String url = "https://api.yelp.com/v3/businesses/search?location=801%20Childs%20Way,%20Los%20Angeles,%20CA%2090089&term="+ query + "&limit=" + size + "&sort_by=distance";
+		String url = "https://api.yelp.com/v3/businesses/search?location=801%20Childs%20Way,%20Los%20Angeles,%20CA%2090089&term="+ query + "&sort_by=distance";
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
