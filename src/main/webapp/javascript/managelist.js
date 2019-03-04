@@ -80,24 +80,21 @@ var selectedList = '';
 			  function(data, status){
 			    console.log(data);
 			    data.forEach(function(item, i){
-			    	if(Cookies.get(item.alias) == 'Favorites'){ //If on favorites list move to front
+			    	if(Cookies.get(item.alias) == 'Favorites'){
 			    		data.splice(i, 1);
 			    		data.unshift(item);
 			    	}
-			    	if(Cookies.get(item.alias) == 'Do Not Show'){ //If on do not show list, remove for list
+			    	if(Cookies.get(item.alias) == 'Do Not Show'){
 			    		data.splice(i, 1);
 			    	}
 			    });
 			    data.forEach(function(item, i) {
-			    	if(i >= s) return;
 			    	var color = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
 			    		color = 'has-background-white-ter'
 			    	}
-			    	//the restaurant card that holds the restaurant info
-
-			    	var html = '<div class="card" ' + color + '>' + 
-			    					'<div class="card-content" ' + 'id="' + item.alias + '">'+
+			    	var html = '<div class="card ' + color +' " id="' + item.alias + '">' + 
+			    					'<div class="card-content">'+
 			    						'<div class="content">' +
 			    							'<div class="columns">'+
 			    								'<div class="column is-four-fifths">'+
@@ -115,17 +112,12 @@ var selectedList = '';
 			    							'</div>'+
 			    						'</div>'+
 			    					'</div>'+
-
-			    				'</div>';
-
 			    					'<footer class="card-footer">'+
-	    								'<a id="restaurant'+ i +'" class="card-footer-item">Add To List</a>'+
+	    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
 	    							'</footer>'+
-			    				'</div>';	    	
+			    				'</div>';
 			    	$('#restaurants').append(html);
-			    	//Calling function to get driving time
 			    	$.getDrivingTime(item.location,i)
-			    	//Function to handle click to forward to details page
 			    	$('#'+item.alias).click(function() {
 					    		var id = "id="+item.alias +"&";
 					    		var name = "name=" + item.name +"&";
@@ -135,12 +127,10 @@ var selectedList = '';
 					    		console.log(link);
 					    		var website = "website=" + link;
 					    		var url =  "./restaurant.html?" + id + name + address + phone + website;
-					    		window.location.href = url; 
+					    		
+					    		window.location.href = url;
 					  })
-
-
-			    	$('#restaurant'+i).click(function(){	    		
-			    		selectedList = document.getElementById('dropdown').value;
+			    	$('#restaurant'+i).click(function(){
 			    		if(selectedList != ''){
 			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
 			    			if(Cookies.get(item.alias) == null) {
@@ -149,6 +139,7 @@ var selectedList = '';
 			    			} else {
 			    				console.log(item.name + ' is already on ' + Cookies.get(item.alias));
 			    			}
+			    			
 			    		}
 			    	})
 			    })
@@ -179,8 +170,6 @@ var selectedList = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'
 					    	}
-
-					    	//The html for the recipe card containing all recipe info
 					    	var html = '<div class="card ' + color +' "id="'+item.id+'">' + 
 					    					'<div class="card-content">'+
 					    						'<div class="content">' +
@@ -200,6 +189,9 @@ var selectedList = '';
 					    							'</div>'+
 					    						'</div>'+
 					    					'</div>'+
+					    					'<footer class="card-footer">'+
+			    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
+			    							'</footer>'+
 					    				'</div>';
 					    	$('#recipes').append(html);
 					    	$('#'+item.id).click(function() {
@@ -216,16 +208,9 @@ var selectedList = '';
 					    		window.location.href = url;
 					    	})
 					    	$('#recipe'+i).click(function(){
-					    		selectedList = document.getElementById('dropdown').value;
 					    		if(selectedList != ''){
 					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);
 					    			if(Cookies.get(item.id) == null) {
-					    				$.cookie(selectedList + "Recipe", JSON.stringify($("#Recipe").data()));
-					    				
-					    				$.each($.cookie(selectedList + "Recipe"), function(a,b){
-					    					$("#Recipe").data(JSON.parse($.cookie(selectedList + "Recipe")));
-					    					console.log(JSON.parse($.cookie(selectedList + "Recipe")));
-					    					});
 					    				Cookies.set(item.id, selectedList);
 					    				console.log('Added ' + item.title + ' to ' + selectedList);
 					    			} else {
@@ -237,24 +222,9 @@ var selectedList = '';
 					    })
 				  });
 	  }
-  //Function to get 10 images from google
-  $.getGoogleImages = function() {
-	  var q = $.urlParam('query'); //get search query
-	  var s = $.urlParam('size');
-	  $.post("./GoogleServlet",
-			  {
-				  query: q,
-			  },
-			  function(data, status){
-			    data.items.forEach(function(item, i){
-			    	var rotation = Math.floor(Math.random() * (90)) -45;
-			    	var html = '<img class="food-image" src="' + item.link +'" width="100%" style="transform: rotate(' + rotation +'deg)"/>';
-			    	$('#image'+ i).append(html);
-			    })
-			  })
-  }
+
   
-  $(document).ready(function() {
+  $( document ).ready(function() {
 	  console.log(Cookies.get());
 	  $.getRestaurantResults();
 	  $.getRecipeResults();
