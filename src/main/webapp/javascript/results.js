@@ -80,11 +80,11 @@ var selectedList = '';
 			  function(data, status){
 			    console.log(data);
 			    data.forEach(function(item, i){
-			    	if(Cookies.get(item.alias) == 'Favorites'){
+			    	if(Cookies.get(item.alias) == 'Favorites'){ //If on favorites list move to front
 			    		data.splice(i, 1);
 			    		data.unshift(item);
 			    	}
-			    	if(Cookies.get(item.alias) == 'Do Not Show'){
+			    	if(Cookies.get(item.alias) == 'Do Not Show'){ //If on do not show list, remove for list
 			    		data.splice(i, 1);
 			    	}
 			    });
@@ -93,6 +93,7 @@ var selectedList = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
 			    		color = 'has-background-white-ter'
 			    	}
+			    	//the restaurant card that holds the restaurant info
 			    	var html = '<div class="card ' + color +' " id="' + item.alias + '">' + 
 			    					'<div class="card-content">'+
 			    						'<div class="content">' +
@@ -117,7 +118,9 @@ var selectedList = '';
 	    							'</footer>'+
 			    				'</div>';
 			    	$('#restaurants').append(html);
+			    	//Calling function to get driving time
 			    	$.getDrivingTime(item.location,i)
+			    	//Function to handle click to forward to details page
 			    	$('#'+item.alias).click(function() {
 					    		var id = "id="+item.alias +"&";
 					    		var name = "name=" + item.name +"&";
@@ -130,6 +133,7 @@ var selectedList = '';
 					    		
 					    		window.location.href = url;
 					  })
+					  //
 			    	$('#restaurant'+i).click(function(){
 			    		if(selectedList != ''){
 			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
@@ -170,6 +174,7 @@ var selectedList = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'
 					    	}
+					    	//The html for the recipe card containing all recipe info
 					    	var html = '<div class="card ' + color +' "id="'+item.id+'">' + 
 					    					'<div class="card-content">'+
 					    						'<div class="content">' +
@@ -234,13 +239,12 @@ var selectedList = '';
 			    data.items.forEach(function(item, i){
 			    	var rotation = Math.floor(Math.random() * (90)) -45;
 			    	var html = '<img class="food-image" src="' + item.link +'" width="100%" style="transform: rotate(' + rotation +'deg)"/>';
-			    	
 			    	$('#image'+ i).append(html);
 			    })
 			  })
   }
   
-  $( document ).ready(function() {
+  $(document).ready(function() {
 	  console.log(Cookies.get());
 	  $.getRestaurantResults();
 	  $.getRecipeResults();
