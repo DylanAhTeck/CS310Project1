@@ -93,8 +93,8 @@ var selectedList = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
 			    		color = 'has-background-white-ter'
 			    	}
-			    	var html = '<div class="card" ' + color + '>' + 
-			    					'<div class="card-content" ' + 'id="' + item.alias + '">'+
+			    	var html = '<div class="card ' + color +' " id="' + item.alias + '">' + 
+			    					'<div class="card-content">'+
 			    						'<div class="content">' +
 			    							'<div class="columns">'+
 			    								'<div class="column is-four-fifths">'+
@@ -113,9 +113,9 @@ var selectedList = '';
 			    						'</div>'+
 			    					'</div>'+
 			    					'<footer class="card-footer">'+
-	    								'<a id="restaurant'+ i +'" class="card-footer-item">Add To List</a>'+
+	    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
 	    							'</footer>'+
-			    				'</div>';	    	
+			    				'</div>';
 			    	$('#restaurants').append(html);
 			    	$.getDrivingTime(item.location,i)
 			    	$('#'+item.alias).click(function() {
@@ -127,10 +127,10 @@ var selectedList = '';
 					    		console.log(link);
 					    		var website = "website=" + link;
 					    		var url =  "./restaurant.html?" + id + name + address + phone + website;
-					    		window.location.href = url; 
+					    		
+					    		window.location.href = url;
 					  })
-			    	$('#restaurant'+i).click(function(){	    		
-			    		selectedList = document.getElementById('dropdown').value;
+			    	$('#restaurant'+i).click(function(){
 			    		if(selectedList != ''){
 			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
 			    			if(Cookies.get(item.alias) == null) {
@@ -139,6 +139,7 @@ var selectedList = '';
 			    			} else {
 			    				console.log(item.name + ' is already on ' + Cookies.get(item.alias));
 			    			}
+			    			
 			    		}
 			    	})
 			    })
@@ -169,31 +170,29 @@ var selectedList = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'
 					    	}
-					    	
-					    	var html = '<div class="card" ' + color + '>' + 
-							'<div class="card-content ' + ' id="' + item.id+ '">'+
-								'<div class="content">' +
-									'<div class="columns">'+
-										'<div class="column is-three-fifths">'+
-											'<div class="has-text-left">'+
-												'<p>' + item.title + '</p>'+
-												'<p></p>'+
-												'<p>' + $.getCookTime(item.preparationMinutes, item.cookingMinutes, item.readyInMinutes) + '</p>'+
-											'</div>'+
-										'</div>'+
-										'<div class="column is-two-fifths">'+
-											'<div class="has-text-right">'+
-												'<p>' + $.getStarsRecipe(item.spoonacularScore) + '</p>' +
-											'</div>'+
-										'</div>'+
-									'</div>'+
-								'</div>'+
-							'</div>'+
-							'<footer class="card-footer">'+
-								'<a id="recipe'+i+'" class="card-footer-item">Add To List</a>'+
-							'</footer>'+
-						    '</div>';
-					    	
+					    	var html = '<div class="card ' + color +' "id="'+item.id+'">' + 
+					    					'<div class="card-content">'+
+					    						'<div class="content">' +
+					    							'<div class="columns">'+
+					    								'<div class="column is-three-fifths">'+
+					    									'<div class="has-text-left">'+
+					    										'<p>' + item.title + '</p>'+
+					    										'<p></p>'+
+					    										'<p>' + $.getCookTime(item.preparationMinutes, item.cookingMinutes, item.readyInMinutes) + '</p>'+
+					    									'</div>'+
+					    								'</div>'+
+					    								'<div class="column is-two-fifths">'+
+					    									'<div class="has-text-right">'+
+					    										'<p>' + $.getStarsRecipe(item.spoonacularScore) + '</p>' +
+					    									'</div>'+
+					    								'</div>'+
+					    							'</div>'+
+					    						'</div>'+
+					    					'</div>'+
+					    					'<footer class="card-footer">'+
+			    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
+			    							'</footer>'+
+					    				'</div>';
 					    	$('#recipes').append(html);
 					    	$('#'+item.id).click(function() {
 					    		var id = "id="+item.id +"&";
@@ -209,16 +208,9 @@ var selectedList = '';
 					    		window.location.href = url;
 					    	})
 					    	$('#recipe'+i).click(function(){
-					    		selectedList = document.getElementById('dropdown').value;
 					    		if(selectedList != ''){
 					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);
 					    			if(Cookies.get(item.id) == null) {
-					    				$.cookie(selectedList + "Recipe", JSON.stringify($("#Recipe").data()));
-					    				
-					    				$.each($.cookie(selectedList + "Recipe"), function(a,b){
-					    					$("#Recipe").data(JSON.parse($.cookie(selectedList + "Recipe")));
-					    					console.log(JSON.parse($.cookie(selectedList + "Recipe")));
-					    					});
 					    				Cookies.set(item.id, selectedList);
 					    				console.log('Added ' + item.title + ' to ' + selectedList);
 					    			} else {
@@ -230,23 +222,7 @@ var selectedList = '';
 					    })
 				  });
 	  }
-  //Function to get 10 images from google
-  $.getGoogleImages = function() {
-	  var q = $.urlParam('query'); //get search query
-	  var s = $.urlParam('size');
-	  $.post("./GoogleServlet",
-			  {
-				  query: q,
-			  },
-			  function(data, status){
-			    data.items.forEach(function(item, i){
-			    	var rotation = Math.floor(Math.random() * (90)) -45;
-			    	var html = '<img class="food-image" src="' + item.link +'" width="100%" style="transform: rotate(' + rotation +'deg)"/>';
-			    	
-			    	$('#image'+ i).append(html);
-			    })
-			  })
-  }
+
   
   $( document ).ready(function() {
 	  console.log(Cookies.get());
