@@ -78,7 +78,6 @@ var selectedList = '';
 				  size: s,
 			  },
 			  function(data, status){
-			    console.log(data);
 			    data.forEach(function(item, i){
 			    	if(Cookies.get(item.alias) == 'Favorites'){
 			    		data.splice(i, 1);
@@ -132,13 +131,24 @@ var selectedList = '';
 			    	$('#restaurant'+i).click(function(){	    		
 			    		selectedList = document.getElementById('dropdown').value;
 			    		if(selectedList != ''){
-			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
-			    			if(Cookies.get(item.alias) == null) {
-			    				Cookies.set(item.alias, selectedList);
+			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);	
+			    			
+			    				if(Cookies.get(selectedList) == null) 
+			    				{
+			    					var arr = [];
+			    					arr.push(item);
+			    					Cookies.set(selectedList, JSON.stringify(arr));
+			    				}			
+			    				else
+			    				{
+			    					var json_str = Cookies.get(selectedList);
+			    					var arr = JSON.parse(json_str);
+			    					console.log(arr);
+			    					arr.push(item);
+			    					Cookies.set(selectedList,JSON.stringify(arr));
+			    				}
+			    				console.log('cookie: ' + JSON.parse(Cookies.get(selectedList)));
 			    				console.log('Added ' + item.name + ' to ' + selectedList);
-			    			} else {
-			    				console.log(item.name + ' is already on ' + Cookies.get(item.alias));
-			    			}
 			    		}
 			    	})
 			    })
@@ -148,13 +158,14 @@ var selectedList = '';
 		//Making ajax request to YelpApi
 		  var q = $.urlParam('query'); //get search query
 		  var s = $.urlParam('size'); //get number of results 
+		  //Something in post to Spoonacular is causing out of range error 
 		  $.post("./SpoonacularApi",
 				  {
 					  query: q,
 					  size: s,
 				  },
-				  function(data, status){
-					  console.log(data);
+				  function(data, status){				  
+					  //console.log(data);			  
 					    data.forEach(function(item, i){
 					    	if(Cookies.get(item.id) == 'Favorites'){
 					    		data.splice(i, 1);
@@ -165,11 +176,11 @@ var selectedList = '';
 					    	}
 					    });
 					    data.forEach(function(item, i) {
+					    	
 					    	var color = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'
 					    	}
-					    	
 					    	var html = '<div class="card" ' + color + '>' + 
 							'<div class="card-content ' + ' id="' + item.id+ '">'+
 								'<div class="content">' +
@@ -195,6 +206,7 @@ var selectedList = '';
 						    '</div>';
 					    	
 					    	$('#recipes').append(html);
+					    	
 					    	$('#'+item.id).click(function() {
 					    		var id = "id="+item.id +"&";
 					    		var title = "title=" + item.title +"&";
@@ -208,27 +220,39 @@ var selectedList = '';
 					    		
 					    		window.location.href = url;
 					    	})
+					    	
 					    	$('#recipe'+i).click(function(){
 					    		selectedList = document.getElementById('dropdown').value;
 					    		if(selectedList != ''){
-					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);
-					    			if(Cookies.get(item.id) == null) {
-					    				$.cookie(selectedList + "Recipe", JSON.stringify($("#Recipe").data()));
-					    				
-					    				$.each($.cookie(selectedList + "Recipe"), function(a,b){
-					    					$("#Recipe").data(JSON.parse($.cookie(selectedList + "Recipe")));
-					    					console.log(JSON.parse($.cookie(selectedList + "Recipe")));
-					    					});
-					    				Cookies.set(item.id, selectedList);
-					    				console.log('Added ' + item.title + ' to ' + selectedList);
-					    			} else {
-					    				console.log(item.title + ' is already on ' + Cookies.get(item.id));
-					    			}
-					    			
+					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);		
+					    				if(Cookies.get(selectedList) == null) 
+					    				{
+					    					console.log('list does not exist');
+					    					var arr = [];
+					    					arr.push(item);
+					    					Cookies.set(selectedList, JSON.stringify(arr));
+					    				}			
+					    				else
+					    				{
+					    					var json_str = Cookies.get(selectedList);
+					    					var arr = JSON.parse(json_str);
+					    					console.log(selectedList + ': ' + arr);
+					    					console.log('1');
+					    					console.log(arr);
+					    					arr.push(item);
+					    					console.log('2');
+					    					console.log(arr);
+					    					Cookies.set(selectedList,JSON.stringify(arr));
+					    				}
+					    				console.log('cookie: ' + JSON.parse(Cookies.get(selectedList)));
+					    				console.log('Added ' + item.title + ' to ' + selectedList);	
 					    		}
 					    	})
+					    	
+					    	
 					    })
 				  });
+				  
 	  }
   //Function to get 10 images from google
   $.getGoogleImages = function() {
@@ -255,6 +279,13 @@ var selectedList = '';
 	  $.getGoogleImages();
 	  $('.dropdown-trigger').click(function() {
 		  $('.dropdown').addClass('is-active');
+	  })
+	  
+	  $('#managelist').click(function(){
+		  selectedList = document.getElementById('dropdown').value;
+		  var url =  './managelist.html?listTitle=' + selectedList; 
+		  console.log('selected list: ' + selectedList);
+		  if(selectedList != '') window.location.href = url;
 	  })
 	  
 	  $('#favorites').click(function() {

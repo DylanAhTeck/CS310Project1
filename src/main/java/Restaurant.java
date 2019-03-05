@@ -8,6 +8,7 @@ public class Restaurant {
 	String price;
 	String phone;
 	String url;
+	String type = "Restaurant";
 	
 	public Restaurant(String name, Location location, int rating, float distance, String price, String phone, String url) {
 		this.name = name;
@@ -17,6 +18,7 @@ public class Restaurant {
 		this.price = price;
 		this.phone = phone;
 		this.url = url;
+		
 	}
 	
 	public String getName() {

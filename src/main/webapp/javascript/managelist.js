@@ -1,9 +1,11 @@
 var selectedList = '';
 //Function to get URL Parameters
+
   $.urlParam = function(name){
 		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 		return results[1] || 0;
 	}
+	
   //Function to render star rating for restaurants
   $.getStars = function(rating) {
 	  var stars = '';
@@ -43,6 +45,7 @@ var selectedList = '';
 	  return (loc.address1 + ", " + loc.city + ", " + loc.state + " " + loc.zip_code);
   }
   //Function to get driving time
+ 
   $.getDrivingTime = function(loc,i) {
 	  var key = 'AIzaSyCdpgAD8kWgEeFD7AY2FMwBAIe_Hz2jITo';
 	  var service = new google.maps.DistanceMatrixService();
@@ -56,6 +59,7 @@ var selectedList = '';
 			$('.distance_'+i).text(response.rows[0].elements[0].duration.text); //Adding driving time to html
 	    }) 
   }
+  
   //Function that returns the prep time and cook time or ready in minutes
   $.getCookTime = function(prep, cook, ready) {
 	  var time = '';
@@ -66,173 +70,196 @@ var selectedList = '';
 	  }
 	  return time;
   }
-  //Function that returns all restaurant results from YelpApi
-  $.getRestaurantResults = function() {
-	//Making ajax request to YelpApi
-	  var q = $.urlParam('query'); //get search query
-	  var s = $.urlParam('size'); //get number of results 
-	  $('.title').text('Results for ' + q.split('+').join(' '));  //Setting Header to 'Results for [q]'
-	  $.post("./YelpApi",
-			  {
-				  query: q,
-				  size: s,
-			  },
-			  function(data, status){
-			    console.log(data);
-			    data.forEach(function(item, i){
-			    	if(Cookies.get(item.alias) == 'Favorites'){
-			    		data.splice(i, 1);
-			    		data.unshift(item);
-			    	}
-			    	if(Cookies.get(item.alias) == 'Do Not Show'){
-			    		data.splice(i, 1);
-			    	}
-			    });
-			    data.forEach(function(item, i) {
-			    	var color = '';
-			    	if(i%2 != 0) { //if index is odd make it gray
-			    		color = 'has-background-white-ter'
-			    	}
-			    	var html = '<div class="card ' + color +' " id="' + item.alias + '">' + 
-			    					'<div class="card-content">'+
-			    						'<div class="content">' +
-			    							'<div class="columns">'+
-			    								'<div class="column is-four-fifths">'+
-			    									'<div class="has-text-left">'+
-			    										'<p>' + item.name + ' ' + $.getStars(item.rating) + '</p>'+
-			    										'<p class="distance_'+i+'"></p>'+
-			    										'<p>' + $.getAddress(item.location) + '</p>'+
-			    									'</div>'+
-			    								'</div>'+
-			    								'<div class="column is-one-fifth">'+
-			    									'<div class="has-text-right">'+
-			    										'<p>' + $.getPrice(item.price) + '</p>' +
-			    									'</div>'+
-			    								'</div>'+
-			    							'</div>'+
-			    						'</div>'+
-			    					'</div>'+
-			    					'<footer class="card-footer">'+
-	    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
-	    							'</footer>'+
-			    				'</div>';
-			    	$('#restaurants').append(html);
-			    	$.getDrivingTime(item.location,i)
-			    	$('#'+item.alias).click(function() {
-					    		var id = "id="+item.alias +"&";
-					    		var name = "name=" + item.name +"&";
-					    		var address = "address=" + $.getAddress(item.location) + "&";
-					    		var phone = "phone=" + item.phone + "&";
-					    		var link = encodeURIComponent(item.url);
-					    		console.log(link);
-					    		var website = "website=" + link;
-					    		var url =  "./restaurant.html?" + id + name + address + phone + website;
-					    		
-					    		window.location.href = url;
-					  })
-			    	$('#restaurant'+i).click(function(){
-			    		if(selectedList != ''){
-			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);
-			    			if(Cookies.get(item.alias) == null) {
-			    				Cookies.set(item.alias, selectedList);
-			    				console.log('Added ' + item.name + ' to ' + selectedList);
-			    			} else {
-			    				console.log(item.name + ' is already on ' + Cookies.get(item.alias));
-			    			}
-			    			
-			    		}
-			    	})
-			    })
-			  });
+  //Function that returns all restaurant results from List
+  $.getList = function() {
+	//Returning JSON array from cookie
+	  selectedList = $.urlParam('listTitle');
+	  var json_str = Cookies.get(selectedList);
+	  var arr = JSON.parse(json_str);
+	  
+	
+	 $('.title').text('Results for ' + selectedList);  //Setting Header to 'Results for [q]'
+				    
+	    arr.forEach(function(item, i) {
+	    	var color = '';
+	    	if(i%2 != 0) { //if index is odd make it gray
+	    		color = 'has-background-white-ter';
+	    	}
+	    	
+	    	if(item.name != null) $.getRestaurant(item,i,color);
+	    	else $.getRecipe(item,i,color);
+	    	
+	    });
   }
-  $.getRecipeResults = function() {
-		//Making ajax request to YelpApi
-		  var q = $.urlParam('query'); //get search query
-		  var s = $.urlParam('size'); //get number of results 
-		  $.post("./SpoonacularApi",
-				  {
-					  query: q,
-					  size: s,
-				  },
-				  function(data, status){
-					  console.log(data);
-					    data.forEach(function(item, i){
-					    	if(Cookies.get(item.id) == 'Favorites'){
-					    		data.splice(i, 1);
-					    		data.unshift(item);
-					    	}
-					    	if(Cookies.get(item.id) == 'Do Not Show'){
-					    		data.splice(i, 1);
-					    	}
-					    });
-					    data.forEach(function(item, i) {
-					    	var color = '';
-					    	if(i%2 != 0) { //if index is odd make it gray
-					    		color = 'has-background-white-ter'
-					    	}
-					    	var html = '<div class="card ' + color +' "id="'+item.id+'">' + 
-					    					'<div class="card-content">'+
-					    						'<div class="content">' +
-					    							'<div class="columns">'+
-					    								'<div class="column is-three-fifths">'+
-					    									'<div class="has-text-left">'+
-					    										'<p>' + item.title + '</p>'+
-					    										'<p></p>'+
-					    										'<p>' + $.getCookTime(item.preparationMinutes, item.cookingMinutes, item.readyInMinutes) + '</p>'+
-					    									'</div>'+
-					    								'</div>'+
-					    								'<div class="column is-two-fifths">'+
-					    									'<div class="has-text-right">'+
-					    										'<p>' + $.getStarsRecipe(item.spoonacularScore) + '</p>' +
-					    									'</div>'+
-					    								'</div>'+
-					    							'</div>'+
-					    						'</div>'+
-					    					'</div>'+
-					    					'<footer class="card-footer">'+
-			    								'<a id="restaurant'+i+'" class="card-footer-item">Add To List</a>'+
-			    							'</footer>'+
-					    				'</div>';
-					    	$('#recipes').append(html);
-					    	$('#'+item.id).click(function() {
-					    		var id = "id="+item.id +"&";
-					    		var title = "title=" + item.title +"&";
-					    		var image = "image=" + item.image + "&";
-					    		var ingredients = "ingredients=" +JSON.stringify(item.extendedIngredients) + "&";
-					    		var instructions = "instructions=" + item.instructions + "&";
-					    		var prepTime = "prepTime=" + item.preparationMinutes + "&";
-					    		var cookTime = "cookTime=" + item.cookingMinutes + "&";
-					    		var readyTime = "readyTime=" + item.readyInMinutes + "&";
-					    		var url =  "./recipe.html?" + id + title + image + ingredients + instructions + prepTime + cookTime + readyTime;
-					    		
-					    		window.location.href = url;
-					    	})
-					    	$('#recipe'+i).click(function(){
-					    		if(selectedList != ''){
-					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);
-					    			if(Cookies.get(item.id) == null) {
-					    				Cookies.set(item.id, selectedList);
-					    				console.log('Added ' + item.title + ' to ' + selectedList);
-					    			} else {
-					    				console.log(item.title + ' is already on ' + Cookies.get(item.id));
-					    			}
-					    			
-					    		}
-					    	})
-					    })
-				  });
-	  }
+  
+  //Create footer
+  	$.addMoveAddRemove = function(type, item, i){
+	$('#move'+type+i).click(function(){
+	selectedList = document.getElementById('dropdown').value;
+	if(selectedList != '' && selectedList != $.urlParam('listTitle')){
+	console.log('Attempting to move ' + item.name + ' to ' + selectedList);
+	if(Cookies.get(selectedList) == null) 
+	{
+		var arr = [];
+		arr.push(item);
+		Cookies.set(selectedList, JSON.stringify(arr));
+	}		
+	else
+	{
+		var json_str = Cookies.get(selectedList);
+		var arr = JSON.parse(json_str);
+		console.log(arr);
+		arr.push(item);
+		Cookies.set(selectedList,JSON.stringify(arr));
+	}
+	var json_str = Cookies.get($.urlParam('listTitle'));
+	var arr = JSON.parse(json_str);
+	for(var i=0; i < arr.length; i++){
+		if(arr[i].alias === item.alias)  arr.splice(i,1);
+		break;
+		}
+	Cookies.set($.urlParam('listTitle'),JSON.stringify(arr));
+	window.location.reload();
+	} else {
+		console.log('No list is specified');
+	}
+	})
+	
+	$('#remove'+type+i).click(function(){
+	selectedList = document.getElementById('dropdown').value;
+	console.log('Attempting to remove ' + item.name + ' from ' + selectedList);
+	var json_str = Cookies.get(selectedList);
+	var arr = JSON.parse(json_str);
+	for(var i=0; i < arr.length; i++){
+		if(arr[i].alias === item.alias)  arr.splice(i,1);
+		break;
+		}
+	Cookies.set(selectedList,JSON.stringify(arr));
+	window.location.reload();
+	})
+	
+  	}
+	
+  $.getRestaurant = function(item, i, color){
+			  var html = '<div class="card" ' + color + '>' + 
+				'<div class="card-content" ' + 'id="' + item.alias + '">'+
+					'<div class="content">' +
+						'<div class="columns">'+
+							'<div class="column is-four-fifths">'+
+								'<div class="has-text-left">'+
+									'<p>' + item.name + ' ' + $.getStars(item.rating) + '</p>'+
+									'<p class="distance_'+i+'"></p>'+
+									'<p>' + $.getAddress(item.location) + '</p>'+
+								'</div>'+
+							'</div>'+
+							'<div class="column is-one-fifth">'+
+								'<div class="has-text-right">'+
+									'<p>' + $.getPrice(item.price) + '</p>' +
+								'</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+				'</div>'+
+				'<footer class="card-footer">'+
+					'<a id="move'+'restaurant'+i+'" class="card-footer-item">Move To List</a>'+
+					'<a id="remove'+'restaurant'+i+'" class="card-footer-item">Remove From List</a>'+
+				'</footer>'+
+			'</div>';
+		$('#results').append(html);
+		$.getDrivingTime(item.location,i);
+		$('#'+item.alias).click(function() {
+			var id = "id="+item.alias +"&";
+			var name = "name=" + item.name +"&";
+			var address = "address=" + $.getAddress(item.location) + "&";
+			var phone = "phone=" + item.phone + "&";
+			var link = encodeURIComponent(item.url);
+			console.log(link);
+			var website = "website=" + link;
+			var url =  "./restaurant.html?" + id + name + address + phone + website;
+			
+			window.location.href = url;
+		})
+		//Add move/remove button
+		$.addMoveAddRemove('restaurant', item, i);
+		
+	}
+
+  $.getRecipe = function(item, i,color){
+	    	var color = '';
+	    	if(i%2 != 0) { //if index is odd make it gray
+	    		color = 'has-background-white-ter'
+	    	}
+	    	var html = '<div class="card" ' + color + '>' + 
+				'<div class="card-content ' + ' id="' + item.id+ '">'+
+	    						'<div class="content">' +
+	    							'<div class="columns">'+
+	    								'<div class="column is-three-fifths">'+
+	    									'<div class="has-text-left">'+
+	    										'<p>' + item.title + '</p>'+
+	    										'<p></p>'+
+	    										'<p>' + $.getCookTime(item.preparationMinutes, item.cookingMinutes, item.readyInMinutes) + '</p>'+
+	    									'</div>'+
+	    								'</div>'+
+	    								'<div class="column is-two-fifths">'+
+	    									'<div class="has-text-right">'+
+	    										'<p>' + $.getStarsRecipe(item.spoonacularScore) + '</p>' +
+	    									'</div>'+
+	    								'</div>'+
+	    							'</div>'+
+	    						'</div>'+
+	    					'</div>'+
+	    					'<footer class="card-footer">'+
+								'<a id="move'+'recipe'+i+'" class="card-footer-item">Add To List</a>'+
+								'<a id="remove'+'recipe'+i+'" class="card-footer-item">Add To List</a>'+
+							'</footer>'+
+	    				'</div>';
+	    	$('#results').append(html);
+	    	$('#'+item.id).click(function() {
+	    		var id = "id="+item.id +"&";
+	    		var title = "title=" + item.title +"&";
+	    		var image = "image=" + item.image + "&";
+	    		var ingredients = "ingredients=" +JSON.stringify(item.extendedIngredients) + "&";
+	    		var instructions = "instructions=" + item.instructions + "&";
+	    		var prepTime = "prepTime=" + item.preparationMinutes + "&";
+	    		var cookTime = "cookTime=" + item.cookingMinutes + "&";
+	    		var readyTime = "readyTime=" + item.readyInMinutes + "&";
+	    		var url =  "./recipe.html?" + id + title + image + ingredients + instructions + prepTime + cookTime + readyTime;
+	    		
+	    		window.location.href = url;
+	    	})
+	    	$('#recipe'+i).click(function(){
+	    		if(selectedList != ''){
+	    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);
+	    			if(Cookies.get(item.id) == null) {
+	    				Cookies.set(item.id, selectedList);
+	    				console.log('Added ' + item.title + ' to ' + selectedList);
+	    			} else {
+	    				console.log(item.title + ' is already on ' + Cookies.get(item.id));
+	    			}
+	    			
+	    		}
+	    	})
+	    	
+	    	//Add move/remove button
+			$.addMoveAddRemove('recipe', item, i);
+	    };
+	    
+	    
 
   
   $( document ).ready(function() {
 	  console.log(Cookies.get());
-	  $.getRestaurantResults();
-	  $.getRecipeResults();
-	  $.getGoogleImages();
-	  $('.dropdown-trigger').click(function() {
+	  $.getList();
+	  $('#managelist').click(function(){
+		  selectedList = document.getElementById('dropdown').value;
+		  var url =  './managelist.html?listTitle=' + selectedList; 
+		  console.log('selected list: ' + selectedList);
+		  if(selectedList != '') window.location.href = url;
+	  })
+	   /*
+	    $('.dropdown-trigger').click(function() {
 		  $('.dropdown').addClass('is-active');
 	  })
-	  
 	  $('#favorites').click(function() {
 		  selectedList = 'Favorites';
 		  $('#dropdown-title').text(selectedList);
@@ -257,4 +284,5 @@ var selectedList = '';
 		  $('#favorites').removeClass('is-active');
 		  $('#explore').removeClass('is-active');
 	  })
+	  */
   })
