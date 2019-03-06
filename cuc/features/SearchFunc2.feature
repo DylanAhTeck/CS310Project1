@@ -1,4 +1,5 @@
-Feature: Search Page Functionality 1
+Feature: Search Page Functionality 2
 Scenario: Text box with prompt text
-Given user is in Search Page
-Then display a text box with the prompt text “Enter food” 
+Given the user is in Search Page 2
+Then it should display a text box 
+And with the prompt text “Enter food”
