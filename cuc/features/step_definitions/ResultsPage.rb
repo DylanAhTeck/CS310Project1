@@ -7,10 +7,12 @@ end
 
 
 Given(/^the user is in Results Page 2$/) do
-  visit "http://localhost:8080/CSCI310Project1/results.html"
+  visit "http://localhost:8080/CSCI310Project1/index.html"
+  fill_in 'query', with: 'Chinese'
+  page.find(".btn").click
 end
 Then(/^display a title of the form “Results for F”$/) do
-  page.find(".title")
+  expect(page.find(".title")).to have_content("Results for Chinese")
 end
 
 Given(/^the user is in Results Page 3$/) do
@@ -37,7 +39,7 @@ And(/^a list is selected from the drop down menu$/) do
   select "Explore", :from => "dropdown"
 end
 When(/^the ManageList Button is clicked$/) do
-  click_on(class: 'button')
+  page.find('.button', match: :first).click
 end
 Then(/^direct the user to the List Management Page$/) do
   expect(page).to have_title("ImHungry | ManageList")
@@ -61,7 +63,7 @@ Then(/^the Results Page displays the column of restaurants$/) do
   page.find_by_id("restaurants")
 end
 And(/^the restaurants must include the following information: i. Name of the restaurant; ii. Address of the restaurant; iv. Minutes of driving to get to the restaurant ;v. Price range of the restaurant$/) do
-  expect(page).to has_css(".card-content")
+  expect(page).to have_css(".card-content")
 end
 
 Given(/^the user is in Results Page 5c$/) do
@@ -70,7 +72,7 @@ Given(/^the user is in Results Page 5c$/) do
     page.find(".btn").click
 end
 When(/^the user clicks on the restaurant$/) do
-  click_on(class: 'toclick')
+  page.find_by_id("restaurants").find('.card', match: :first).find('.card-content').click
 end
 Then(/^the user should be directed to the Restaurant Page$/) do
   expect(page).to have_title("ImHungry | Restaurant")
@@ -93,8 +95,8 @@ end
 Then(/^the Results Page displays the column of recipes$/) do
   page.find_by_id("recipes")
 end
-And(/^the restaurants must include the following information: i. Name of the restaurant; ii. Address of the restaurant; iv. Minutes of driving to get to the restaurant ;v. Price range of the restaurant$/) do
-  expect(page).to has_css(".card-content")
+And(/^the recipes must include the following information: i. Name of the recipe; iii. Stars received by the restaurant by reviewers$/) do
+  expect(page).to have_css(".card-content")
 end
 
 Given(/^the user is in Results Page 6c$/) do
@@ -103,7 +105,7 @@ Given(/^the user is in Results Page 6c$/) do
     page.find(".btn").click
 end
 When(/^the user clicks on the recipe$/) do
-  click_on(class: 'toclick')
+  page.find_by_id("recipes").find('.card', match: :first).find('.card-content').click
 end
 Then(/^the user should be directed to the Recipe Page$/) do
   expect(page).to have_title("ImHungry | Recipe")
@@ -119,6 +121,7 @@ And(/^the user selects a predefined list from the drop down menu$/) do
 end
 When(/^the user clicks the "Add to List" button on the result$/) do
   page.find_by_id("recipes")
+  "qioheioqweoqwei How the add to list method works?"
 end
 Then(/^the result should be added to the selected list$/) do
   page.find_by_id("recipes")
@@ -151,11 +154,11 @@ end
 Given(/^the user is in Results Page 8$/) do
   visit "http://localhost:8080/CSCI310Project1/results.html"
 end
-When(/^the user clicks on the "Back to Search" button$/) do
-  click_on(class: 'button')
+When(/^the user clicks on the "Return to Search" button$/) do
+  page.all(class: 'button')[1].click
 end
 Then(/^the user should be directed back to the Search Page$/) do
-  expect(page).to have_title("ImHungry | Index")
+  expect(page).to have_title("ImHungry | Search")
 end
 
 Given(/^the user is in the Search Page App2$/) do
@@ -168,7 +171,7 @@ When(/^the Search Page displays the results$/) do
   page.find_by_id("restaurants")
 end
 Then(/^Rows in the results lists must alternate their background color between two different shades of gray$/) do
-  expect(page).to have_field(".has-background-white-ter")
+  expect(page).to have_css("has-background-white-ter")
 end
 
 Given(/^the user is in the Search Page App 3c$/) do
