@@ -29,18 +29,21 @@ $.getParams = function() {
 $.renderRecipe = function() {
 	$('#recipe-title').text(title);
 	$('#recipe-image').html('<img src="' + image + '" />');
+	//If the recipe does not have seperate cook times, render time that contains both.
 	if(prepTime != "null" && cookTime != "null") {
 		$('#recipe-prep-time').text('Prep Time: ' + prepTime + ' minute(s)');
 		$('#recipe-cook-time').text('Cook Time: ' + cookTime + ' minute(s)');
 	} else {
 		$('#recipe-prep-time').text('Ready in ' + readyTime + ' minute(s)');
 	}
+	//List out each recipe ingredient
 	var ingredientsList = '';
 	ingredients.forEach(function(item, i) {
 		ingredientsList += '<li>'+item.originalString+'</li>'
 	})
 	$('#ingredients').html(ingredientsList);
 	var instructionsList = '';
+	//List out each instruction
 	instructions.forEach(function(item, i) {
 		if(item != ""){
 			instructionsList += '<li>'+item+'</li>';
