@@ -209,7 +209,7 @@ var selectedList = '';
 					    	}
 
 					    	var html = '<div class="card" ' + color + '>' + 
-							'<div class="card-content ' + ' id="' + item.id+ '">'+
+							'<div class="card-content ' + '" id="' + item.id+ '">'+
 								'<div class="content">' +
 									'<div class="columns">'+
 										'<div class="column is-three-fifths">'+
@@ -227,9 +227,6 @@ var selectedList = '';
 									'</div>'+
 								'</div>'+
 							'</div>'+
-							'<footer class="card-footer">'+
-								'<a id="recipe'+i+'" class="card-footer-item">Add To List</a>'+
-							'</footer>'+
 						    '</div>';
 					    	
 
