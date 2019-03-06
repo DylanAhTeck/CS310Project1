@@ -77,16 +77,44 @@ var selectedList = '';
 				  query: q,
 				  size: s,
 			  },
-			  function(data, status){
-			    data.forEach(function(item, i){
-			    	if(Cookies.get(item.alias) == 'Favorites'){
-			    		data.splice(i, 1);
-			    		data.unshift(item);
-			    	}
-			    	if(Cookies.get(item.alias) == 'Do Not Show'){
-			    		data.splice(i, 1);
-			    	}
-			    });
+			  
+			  function(data, status){	
+				  
+				  $.post("./ListServlet",
+						  {
+					  		'function': 'return', 
+					  		'list' : 'do-not-show',
+					  		'type' : 'restaurant',
+					  		 
+						  },						  
+						  function(dnsArray){
+							  data.forEach(function(item, i) {
+								  dnsArray.forEach(function(dnsItems) {			  
+									  if (item.name == dnsItems.name)
+										  {
+										  console.log('in here. i: ' + i)
+										  console.log('item name' + item.name)
+									      console.log('dns name ' + dnsItems.name)
+										  data.splice(i,1);
+										  }
+						  })})})
+				 $.post("./ListServlet",
+				  {
+			  		'function': 'return', 
+			  		'list' : 'favorites',
+			  		'type' : 'restaurant',
+			  		 
+				  },						  
+				  function(favArray){
+					  data.forEach(function(item, i) {
+						  favArray.forEach(function(favItems) {									 
+							  if (item.name == fav.name)
+								  {
+								  data.splice(i,1);
+								  data.unshift(item);
+								  }
+				  })})})  
+				  
 			    data.forEach(function(item, i) {
 			    	var color = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
@@ -130,26 +158,22 @@ var selectedList = '';
 					  })
 			    	$('#restaurant'+i).click(function(){	    		
 			    		selectedList = document.getElementById('dropdown').value;
-			    		if(selectedList != ''){
-			    			console.log('Attempting to add ' + item.name + ' to ' + selectedList);	
-			    			
-			    				if(Cookies.get(selectedList) == null) 
-			    				{
-			    					var arr = [];
-			    					arr.push(item);
-			    					Cookies.set(selectedList, JSON.stringify(arr));
-			    				}			
-			    				else
-			    				{
-			    					var json_str = Cookies.get(selectedList);
-			    					var arr = JSON.parse(json_str);
-			    					console.log(arr);
-			    					arr.push(item);
-			    					Cookies.set(selectedList,JSON.stringify(arr));
-			    				}
-			    				console.log('cookie: ' + JSON.parse(Cookies.get(selectedList)));
-			    				console.log('Added ' + item.name + ' to ' + selectedList);
-			    		}
+			    		if(selectedList != "")
+			    			{
+			    		$.ajax({
+			                url: './ListServlet',
+			                type: 'post',
+			                dataType: 'json',
+			                data: {
+			                	'item': JSON.stringify(item),
+			                	 'function': 'add', 
+			                	 'list' : selectedList,
+			                	 'type' : 'restaurant',
+			                }
+			                
+			            })
+			    			}
+			
 			    	})
 			    })
 			  });
@@ -158,23 +182,14 @@ var selectedList = '';
 		//Making ajax request to YelpApi
 		  var q = $.urlParam('query'); //get search query
 		  var s = $.urlParam('size'); //get number of results 
-		  //Something in post to Spoonacular is causing out of range error 
+		  
 		  $.post("./SpoonacularApi",
 				  {
 					  query: q,
 					  size: s,
 				  },
-				  function(data, status){				  
-					  //console.log(data);			  
-					    data.forEach(function(item, i){
-					    	if(Cookies.get(item.id) == 'Favorites'){
-					    		data.splice(i, 1);
-					    		data.unshift(item);
-					    	}
-					    	if(Cookies.get(item.id) == 'Do Not Show'){
-					    		data.splice(i, 1);
-					    	}
-					    });
+				  function(data, status){
+				
 					    data.forEach(function(item, i) {
 					    	
 					    	var color = '';
@@ -223,30 +238,21 @@ var selectedList = '';
 					    	
 					    	$('#recipe'+i).click(function(){
 					    		selectedList = document.getElementById('dropdown').value;
-					    		if(selectedList != ''){
-					    			console.log('Attempting to add ' + item.title + ' to ' + selectedList);		
-					    				if(Cookies.get(selectedList) == null) 
-					    				{
-					    					console.log('list does not exist');
-					    					var arr = [];
-					    					arr.push(item);
-					    					Cookies.set(selectedList, JSON.stringify(arr));
-					    				}			
-					    				else
-					    				{
-					    					var json_str = Cookies.get(selectedList);
-					    					var arr = JSON.parse(json_str);
-					    					console.log(selectedList + ': ' + arr);
-					    					console.log('1');
-					    					console.log(arr);
-					    					arr.push(item);
-					    					console.log('2');
-					    					console.log(arr);
-					    					Cookies.set(selectedList,JSON.stringify(arr));
-					    				}
-					    				console.log('cookie: ' + JSON.parse(Cookies.get(selectedList)));
-					    				console.log('Added ' + item.title + ' to ' + selectedList);	
-					    		}
+					    		if(selectedList != ""){
+					    		$.ajax({
+					                url: './ListServlet',
+					                type: 'post',
+					                dataType: 'json',
+					                data: {
+					                	'item': JSON.stringify(item),
+					                	 'function': 'add', 
+					                	 'list' : selectedList,
+					                	 'type' : 'recipe',
+					                }
+					                
+					            })
+					    	}
+			
 					    	})
 					    	
 					    	
@@ -277,39 +283,18 @@ var selectedList = '';
 	  $.getRestaurantResults();
 	  $.getRecipeResults();
 	  $.getGoogleImages();
-	  $('.dropdown-trigger').click(function() {
-		  $('.dropdown').addClass('is-active');
-	  })
+
 	  
 	  $('#managelist').click(function(){
 		  selectedList = document.getElementById('dropdown').value;
 		  var url =  './managelist.html?listTitle=' + selectedList; 
 		  console.log('selected list: ' + selectedList);
-		  if(selectedList != '') window.location.href = url;
+		  if(selectedList != '') 
+			  {
+			  Cookies.set('resultsURL', window.location.href);
+			  window.location.href = url;
+			  }
 	  })
 	  
-	  $('#favorites').click(function() {
-		  selectedList = 'Favorites';
-		  $('#dropdown-title').text(selectedList);
-		  $(this).addClass('is-active');
-		  $('.dropdown').removeClass('is-active');
-		  $('#explore').removeClass('is-active');
-		  $('#do-not-show').removeClass('is-active');
-	  })
-	  $('#explore').click(function() {
-		  selectedList = 'To Explore';
-		  $('#dropdown-title').text(selectedList);
-		  $(this).addClass('is-active');
-		  $('.dropdown').removeClass('is-active');
-		  $('#favorites').removeClass('is-active');
-		  $('#do-not-show').removeClass('is-active');
-	  })
-	  $('#do-not-show').click(function() {
-		  selectedList = 'Do Not Show';
-		  $('#dropdown-title').text(selectedList);
-		  $(this).addClass('is-active');
-		  $('.dropdown').removeClass('is-active');
-		  $('#favorites').removeClass('is-active');
-		  $('#explore').removeClass('is-active');
-	  })
+
   })

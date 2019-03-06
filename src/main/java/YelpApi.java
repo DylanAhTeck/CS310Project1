@@ -76,8 +76,10 @@ public class YelpApi extends HttpServlet {
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
+	    
 		String query = request.getParameter("query");
 		String size = request.getParameter("size");
+		
 		
 		response.getWriter().print(getYelpApiResults(query, size));
 	}

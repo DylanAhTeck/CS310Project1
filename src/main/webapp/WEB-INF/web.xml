@@ -22,6 +22,12 @@
   	<description></description>
   	<servlet-class>GoogleServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>ListServlet</servlet-name>
+  	<display-name>ListServlet</display-name>
+  	<description></description>
+  	<servlet-class>ListServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>YelpApi</servlet-name>
   	<url-pattern>/YelpApi</url-pattern>
@@ -33,6 +39,10 @@
   <servlet-mapping>
   	<servlet-name>GoogleServlet</servlet-name>
   	<url-pattern>/GoogleServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ListServlet</servlet-name>
+  	<url-pattern>/ListServlet</url-pattern>
   </servlet-mapping>
   
 </web-app>

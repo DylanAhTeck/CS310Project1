@@ -74,68 +74,86 @@ var selectedList = '';
   $.getList = function() {
 	//Returning JSON array from cookie
 	  selectedList = $.urlParam('listTitle');
-	  var json_str = Cookies.get(selectedList);
-	  var arr = JSON.parse(json_str);
 	  
-	
-	 $('.title').text('Results for ' + selectedList);  //Setting Header to 'Results for [q]'
-				    
-	    arr.forEach(function(item, i) {
-	    	var color = '';
-	    	if(i%2 != 0) { //if index is odd make it gray
-	    		color = 'has-background-white-ter';
-	    	}
-	    	
-	    	if(item.name != null) $.getRestaurant(item,i,color);
-	    	else $.getRecipe(item,i,color);
-	    	
-	    });
+	  //Set title
+	  var title;
+	  if(selectedList == "favorites") title = "Favorites List"
+	  if(selectedList == "explore") title = "Explore List"
+	  if(selectedList == "do-not-show") title = "Do-Not-Show List"
+	  $('.title').text(title);  //Setting Header to 'Results for [q]'
+	  
+	  var i = 0;
+	 
+	  		  $.post("./ListServlet",
+			  {
+		  		'function': 'return', 
+		  		'list' : $.urlParam('listTitle'),
+		  		'type' : 'restaurant',
+		  		 
+			  },
+			  
+			  function(data, status){
+				  data.forEach(function(item) {
+				    	var color = '';
+				    	if(i%2 != 0) { //if index is odd make it gray
+				    		color = 'has-background-white-ter';
+				    	}
+				    	$.getRestaurant(item,i,color);	
+				    	i++;
+			  })})
+			  $.post("./ListServlet",
+				  {
+			  		'function': 'return', 
+			  		'list' : $.urlParam('listTitle'),
+			  		'type' : 'recipe',			  		
+				  },
+				  function(data, status){
+					  data.forEach(function(item) {
+					    	var color = '';
+					    	if(i%2 != 0) { //if index is odd make it gray
+					    		color = 'has-background-white-ter';
+					    	}
+					    	$.getRecipe(item,i,color);
+					    	i++;
+				  })})
   }
   
   //Create footer
   	$.addMoveAddRemove = function(type, item, i){
 	$('#move'+type+i).click(function(){
-	selectedList = document.getElementById('dropdown').value;
-	if(selectedList != '' && selectedList != $.urlParam('listTitle')){
-	console.log('Attempting to move ' + item.name + ' to ' + selectedList);
-	if(Cookies.get(selectedList) == null) 
-	{
-		var arr = [];
-		arr.push(item);
-		Cookies.set(selectedList, JSON.stringify(arr));
-	}		
-	else
-	{
-		var json_str = Cookies.get(selectedList);
-		var arr = JSON.parse(json_str);
-		console.log(arr);
-		arr.push(item);
-		Cookies.set(selectedList,JSON.stringify(arr));
-	}
-	var json_str = Cookies.get($.urlParam('listTitle'));
-	var arr = JSON.parse(json_str);
-	for(var i=0; i < arr.length; i++){
-		if(arr[i].alias === item.alias)  arr.splice(i,1);
-		break;
+		selectedList = document.getElementById('dropdown').value;
+		if(selectedList != '' && selectedList != $.urlParam('listTitle')){
+		$.ajax({
+            url: './ListServlet',
+            type: 'post',
+            dataType: 'json',
+            data: {
+            	'item': JSON.stringify(item),
+            	 'function': 'move', 
+            	 'list' : $.urlParam('listTitle'),
+            	 'moveToList' : selectedList,
+            	 'type' : type,
+            }  })
+            window.location.reload(); 
 		}
-	Cookies.set($.urlParam('listTitle'),JSON.stringify(arr));
-	window.location.reload();
-	} else {
-		console.log('No list is specified');
-	}
+
 	})
 	
 	$('#remove'+type+i).click(function(){
-	selectedList = document.getElementById('dropdown').value;
-	console.log('Attempting to remove ' + item.name + ' from ' + selectedList);
-	var json_str = Cookies.get(selectedList);
-	var arr = JSON.parse(json_str);
-	for(var i=0; i < arr.length; i++){
-		if(arr[i].alias === item.alias)  arr.splice(i,1);
-		break;
-		}
-	Cookies.set(selectedList,JSON.stringify(arr));
-	window.location.reload();
+	
+	$.ajax({
+        url: './ListServlet',
+        type: 'post',
+        dataType: 'json',
+        data: {
+        	'item': JSON.stringify(item),
+        	 'function': 'remove', 
+        	 'list' : $.urlParam('listTitle'),
+        	 'type' : type,
+        	 
+        }  })
+        
+        window.location.reload(); 
 	})
 	
   	}
@@ -185,10 +203,7 @@ var selectedList = '';
 	}
 
   $.getRecipe = function(item, i,color){
-	    	var color = '';
-	    	if(i%2 != 0) { //if index is odd make it gray
-	    		color = 'has-background-white-ter'
-	    	}
+	    	
 	    	var html = '<div class="card" ' + color + '>' + 
 				'<div class="card-content ' + ' id="' + item.id+ '">'+
 	    						'<div class="content">' +
@@ -209,8 +224,8 @@ var selectedList = '';
 	    						'</div>'+
 	    					'</div>'+
 	    					'<footer class="card-footer">'+
-								'<a id="move'+'recipe'+i+'" class="card-footer-item">Add To List</a>'+
-								'<a id="remove'+'recipe'+i+'" class="card-footer-item">Add To List</a>'+
+								'<a id="move'+'recipe'+i+'" class="card-footer-item">Move To List</a>'+
+								'<a id="remove'+'recipe'+i+'" class="card-footer-item">Remove From List</a>'+
 							'</footer>'+
 	    				'</div>';
 	    	$('#results').append(html);
@@ -256,33 +271,8 @@ var selectedList = '';
 		  console.log('selected list: ' + selectedList);
 		  if(selectedList != '') window.location.href = url;
 	  })
-	   /*
-	    $('.dropdown-trigger').click(function() {
-		  $('.dropdown').addClass('is-active');
+	  $('#backToResults').click(function(){
+		  window.location.href = Cookies.get('resultsURL');
 	  })
-	  $('#favorites').click(function() {
-		  selectedList = 'Favorites';
-		  $('#dropdown-title').text(selectedList);
-		  $(this).addClass('is-active');
-		  $('.dropdown').removeClass('is-active');
-		  $('#explore').removeClass('is-active');
-		  $('#do-not-show').removeClass('is-active');
-	  })
-	  $('#explore').click(function() {
-		  selectedList = 'To Explore';
-		  $('#dropdown-title').text(selectedList);
-		  $(this).addClass('is-active');
-		  $('.dropdown').removeClass('is-active');
-		  $('#favorites').removeClass('is-active');
-		  $('#do-not-show').removeClass('is-active');
-	  })
-	  $('#do-not-show').click(function() {
-		  selectedList = 'Do Not Show';
-		  $('#dropdown-title').text(selectedList);
-		  $(this).addClass('is-active');
-		  $('.dropdown').removeClass('is-active');
-		  $('#favorites').removeClass('is-active');
-		  $('#explore').removeClass('is-active');
-	  })
-	  */
+
   })
