@@ -1,6 +1,6 @@
 Feature: List Management Page Functionality 3
 Scenario: Move Item to List
-Given the user is in List Management Page
+Given the user is in List Management Page 3
 And the user has selected list "B" from the drop down menu
 And the list currently in display is list "A"
 And item "I" is in list "A"
