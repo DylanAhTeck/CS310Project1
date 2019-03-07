@@ -78,7 +78,7 @@ var selectedList = '';
 	  //Set title
 	  var title;
 	  if(selectedList == "favorites") title = "Favorites List"
-	  if(selectedList == "explore") title = "Explore List"
+	  if(selectedList == "explore") title = "To Explore List"
 	  if(selectedList == "do-not-show") title = "Do-Not-Show List"
 	  $('.title').text(title);  //Setting Header to 'Results for [q]'
 	  

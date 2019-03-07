@@ -53,33 +53,28 @@
 	   			<ol type="1" id="instructions"></ol>
 	   		</div>
 	   		<div class="column is-one-fifth">
-	   			<a onclick="window.print()" class="button is-fullwidth">Printable Version</a>
-				<a onclick="history.back();" class="button is-fullwidth">Back to Results</a>
-	   			<div class="dropdown">
-				  <div class="dropdown-trigger">
-				    <button class="button is-fullwidth" aria-haspopup="true" aria-controls="dropdown-menu">
-				      <span id="dropdown-title"></span>
-				      <span class="icon is-small">
-				        <i class="fas fa-angle-down" aria-hidden="true"></i>
-				      </span>
-				    </button>
-				  </div>
-				  <div class="dropdown-menu" id="dropdown-menu" role="menu">
-				    <div class="dropdown-content">
-				      <a id="favorites" class="dropdown-item">
-				        Favorites
-				      </a>
-				      <a id="explore" class="dropdown-item">
-				        To Explore
-				      </a>
-				      <a id="do-not-show" class="dropdown-item">
-				        Do Not Show
-				      </a>
-				    </div>
-				  </div>
-				</div>
-				<a id="add-to-list" class="button is-fullwidth">Add to List</a>
-	   		</div>
+	   			<div class="column">
+					    <div class="select is-fullwidth has-text-centered">
+					      <select id = "dropdown">
+					      <option class = "has-text-centered" id="none" value=""> </option>
+					      <option class = "has-text-centered" id="favorites" value = "favorites" >
+					        Favorites
+					      </option>
+					      <option class = "has-text-centered" id="explore" value = "explore">
+					       To Explore
+					      </option>
+					      <option class ="has-text-centered" id="do-not-show" value = "do-not-show">
+					        Do Not Show
+					      </option>
+					      </select>
+					      </div>
+					<div class="button is-fullwidth" id = "addtolist" >Add to List</div>
+					<div class="button is-fullwidth" id = "managelist" >Manage List</div>
+					<a onclick="window.print()" class="button is-fullwidth">Printable Version</a>
+					<a onclick="history.back();" class="button is-fullwidth">Back to Results</a>
+					
+		    	</div>
+		   </div>
 	   	</div>
 	   </div>
 	</div>

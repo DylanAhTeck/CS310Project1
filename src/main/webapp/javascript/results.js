@@ -66,6 +66,48 @@ var selectedList = '';
 	  }
 	  return time;
   }
+  
+  $.trimList = function(data) 
+  {
+	  data.forEach(function(item,i){
+		  console.log('come on ' );
+	  $.post("./ListServlet",
+			  {
+		  		'function': 'check', 
+		  		'list' : 'do-not-show',
+		  		'type' : 'restaurant',
+		  		'item': JSON.stringify(item),		  		 
+			  },						  
+			  function(check){
+				  console.log('here instead: ');
+			  if(check == 'contains') 
+				  {
+				  console.log('data: ' + data);
+				  data.splice(i, 1);	
+				  console.log('im here: ' + data);				
+				  }
+			  })
+	  })
+	  console.log('FINAL DATA: ' + data);	
+	  data.forEach(function(item,i){
+	  $.post("./ListServlet",
+			  {
+		  		'function': 'check', 
+		  		'list' : 'favorites',
+		  		'type' : 'restaurant',
+		  		'item': JSON.stringify(item),		  		 
+			  },						  
+			  function(check){
+			  if(check == 'contains') 
+				  {
+				  data.splice(i, 1);	
+				  data.unshift(item);
+				  }
+			  })
+	  })
+	  
+	  return data;
+  }
   //Function that returns all restaurant results from YelpApi
   $.getRestaurantResults = function() {
 	//Making ajax request to YelpApi
@@ -79,44 +121,13 @@ var selectedList = '';
 			  },
 			  
 			  function(data, status){	
-				  
-				  $.post("./ListServlet",
-						  {
-					  		'function': 'return', 
-					  		'list' : 'do-not-show',
-					  		'type' : 'restaurant',
-					  		 
-						  },						  
-						  function(dnsArray){
-							  data.forEach(function(item, i) {
-								  dnsArray.forEach(function(dnsItems) {			  
-									  if (item.name == dnsItems.name)
-										  {
-										  console.log('in here. i: ' + i)
-										  console.log('item name' + item.name)
-									      console.log('dns name ' + dnsItems.name)
-										  data.splice(i,1);
-										  }
-						  })})})
-				 $.post("./ListServlet",
-				  {
-			  		'function': 'return', 
-			  		'list' : 'favorites',
-			  		'type' : 'restaurant',
-			  		 
-				  },						  
-				  function(favArray){
-					  data.forEach(function(item, i) {
-						  favArray.forEach(function(favItems) {									 
-							  if (item.name == fav.name)
-								  {
-								  data.splice(i,1);
-								  data.unshift(item);
-								  }
-				  })})})  
-				  
+			
+				var d = $.trimList(data);
 
-			    data.forEach(function(item, i) {
+			    d.forEach(function(item, i) {
+			    	
+			    	localStorage.setItem(item.name, JSON.stringify(item));
+			    				    	
 			    	if(i >= s) return;
 			    	var color = '';
 			    	if(i%2 != 0) { //if index is odd make it gray
@@ -167,25 +178,6 @@ var selectedList = '';
 					  })
 
 
-			    	$('#restaurant'+i).click(function(){	    		
-			    		selectedList = document.getElementById('dropdown').value;
-			    		if(selectedList != "")
-			    			{
-			    		$.ajax({
-			                url: './ListServlet',
-			                type: 'post',
-			                dataType: 'json',
-			                data: {
-			                	'item': JSON.stringify(item),
-			                	 'function': 'add', 
-			                	 'list' : selectedList,
-			                	 'type' : 'restaurant',
-			                }
-			                
-			            })
-			    			}
-			
-			    	})
 			    })
 			  });
   }
@@ -200,9 +192,37 @@ var selectedList = '';
 					  size: s,
 				  },
 				  function(data, status){
-				
+					  data.forEach(function(item,i){
+						  $.post("./ListServlet",
+								  {
+							  		'function': 'check', 
+							  		'list' : 'do-not-show',
+							  		'type' : 'recipe',
+							  		'item': JSON.stringify(item),		  		 
+								  },						  
+								  function(check){
+								  if(check == 'contains') data.splice(i, 1);				
+								  })
+						  })
+						  
+						  data.forEach(function(item,i){
+						  $.post("./ListServlet",
+								  {
+							  		'function': 'check', 
+							  		'list' : 'favorites',
+							  		'type' : 'recipe',
+							  		'item': JSON.stringify(item),		  		 
+								  },						  
+								  function(check){
+								  if(check == 'contains') 
+									  {
+									  data.splice(i, 1);	
+									  data.unshift(item);
+									  }
+								  })
+						  })
 					    data.forEach(function(item, i) {
-					    	
+					    	localStorage.setItem(item.title, JSON.stringify(item));
 					    	var color = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'

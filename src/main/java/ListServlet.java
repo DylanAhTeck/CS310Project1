@@ -74,7 +74,7 @@ public class ListServlet extends HttpServlet {
 		{
 			Recipe recipe = gson.fromJson(json, Recipe.class);
 			
-			
+			if(function.equals("check"))  response.getWriter().print(gson.toJson(l.checkIfContains(recipe)));
 			if(function.equals("add")) l.addToList(recipe);
 			if(function.equals("remove")) l.removeFromList(recipe);
 			if(function.equals("move")) l.moveToList(recipe, mtl);
@@ -88,6 +88,7 @@ public class ListServlet extends HttpServlet {
 		{
 			Restaurant restaurant = gson.fromJson(json, Restaurant.class);
 			
+			if(function.equals("check"))  response.getWriter().print(gson.toJson(l.checkIfContains(restaurant)));
 			if(function.equals("add")) l.addToList(restaurant);
 			if(function.equals("remove")) l.removeFromList(restaurant);
 			if(function.equals("move")) l.moveToList(restaurant, mtl);

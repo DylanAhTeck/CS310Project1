@@ -29,6 +29,18 @@ public void addToList(Recipe r) {
 	if(!Contains(r)) RecipeList.add(r);
 }
 
+public String checkIfContains(Recipe r)
+{
+	if(Contains(r)) return "{ \"contains\":\"true\" }"; 
+	else return "";
+}
+
+public String checkIfContains(Restaurant r)
+{
+	if(Contains(r)) return "contains"; 
+	else return "";
+}
+
 
 public void moveToList(Restaurant r, List l) {
 	l.addToList(r);

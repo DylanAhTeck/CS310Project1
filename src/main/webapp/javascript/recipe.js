@@ -54,17 +54,27 @@ $.renderRecipe = function() {
 }
 
 $.addToList = function() {
-	$('#add-to-list').click(function() {
-		if(selectedList != ''){
-			console.log('Attempting to add ' + title + ' to ' + selectedList);
-			if(Cookies.get(id) == null) {
-				Cookies.set(id, selectedList);
-				console.log('Added ' + title + ' to ' + selectedList);
-			} else {
-				console.log(title + ' is already on ' + Cookies.get(id));
+	$('#addtolist').click(function(){	
+		var item = JSON.parse(localStorage.getItem(title));
+		
+		
+		selectedList = document.getElementById('dropdown').value;
+		if(selectedList != "")
+			{
+		$.ajax({
+	        url: './ListServlet',
+	        type: 'post',
+	        dataType: 'json',
+	        data: {
+	        	'item': JSON.stringify(item),
+	        	 'function': 'add', 
+	        	 'list' : selectedList,
+	        	 'type' : 'recipe',
+	        }
+	        
+	    })
 			}
-			
-		}
+
 	})
 }
 
@@ -72,32 +82,16 @@ $( document ).ready(function() {
 	$.getParams();
 	$.renderRecipe();
 	$.addToList();
-	$('.dropdown-trigger').click(function() {
-	  $('.dropdown').addClass('is-active');
-	 })
-	  
-	 $('#favorites').click(function() {
-	  selectedList = 'Favorites';
-	  $('#dropdown-title').text(selectedList);
-	  $(this).addClass('is-active');
-	  $('.dropdown').removeClass('is-active');
-	  $('#explore').removeClass('is-active');
-	  $('#do-not-show').removeClass('is-active');
-	 })
-	 $('#explore').click(function() {
-	  selectedList = 'To Explore';
-	  $('#dropdown-title').text(selectedList);
-	  $(this).addClass('is-active');
-	  $('.dropdown').removeClass('is-active');
-	  $('#favorites').removeClass('is-active');
-	  $('#do-not-show').removeClass('is-active');
-	 })
-	 $('#do-not-show').click(function() {
-	  selectedList = 'Do Not Show';
-	  $('#dropdown-title').text(selectedList);
-	  $(this).addClass('is-active');
-	  $('.dropdown').removeClass('is-active');
-	  $('#favorites').removeClass('is-active');
-	  $('#explore').removeClass('is-active');
-	 })
+	
+	  $('#managelist').click(function(){
+		  selectedList = document.getElementById('dropdown').value;
+		  var url =  './managelist.html?listTitle=' + selectedList; 
+		  console.log('selected list: ' + selectedList);
+		  if(selectedList != '') 
+			  {
+			  Cookies.set('resultsURL', window.location.href);
+			  window.location.href = url;
+			  }
+	  })
+
   })
