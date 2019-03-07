@@ -1,0 +1,49 @@
+@Test
+	public void testGServlet() throws Exception{
+		HttpServletRequest request = mock(HttpServletRequest.class);       
+        HttpServletResponse response = mock(HttpServletResponse.class); 
+        
+        when(request.getParameter("query")).thenReturn("food");//is this how it works
+        
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(writer);
+        
+		//GoogleServlet gs = 
+		new GoogleServlet().doPost(request, response);
+		
+		verify(request, atLeast(1)).getParameter("query"); // only if you want to verify username was called...
+        writer.flush(); // it may not have been flushed yet...
+        //assertTrue(stringWriter.toString().contains("My expected string"));
+        
+		//confused as to how to test if we got the image results without rewriting the program
+	}
+	
+	@Test
+	public void testGSResponseCode() throws IOException{
+		String key ="AIzaSyAt6nXH8XR1AUDEn3nP4WmfxsjuOaNU4-U";
+    	String cx = "017921781541195813540:qxb5prra6vs";
+    	String query = "soil";
+		String url = "https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&q="+query+"&searchType=image&num=10";
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("GET");
+		assertEquals(con.getResponseCode(), 200);
+	}
+	
+	@Test
+	public void testGSFail() throws IOException {
+		String key ="AIzaSyAt6nXH8XR1AUDEn3nP4WmfxsjuOaNU4-U";
+    	String cx = "017921781541195813540:qxb5prra6vs";
+    	String query = "soil";
+		String url = "https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&q="+query+"&searchType=image&num=10";
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("GET");
+		assertThat(con.getResponseCode(), not(200));
+	}
+	
+	@Test
+	public void testGetImg() {//is this even possible
+		fail("Not yet implemented");
+	}
