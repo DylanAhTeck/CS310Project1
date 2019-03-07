@@ -1,4 +1,7 @@
-
+/*
+ * This class is primarily here for
+ * handling the Gson parse to the Restaurant class.
+ */
 public class Location {
 	String city;
 	String country;
@@ -18,7 +21,4 @@ public class Location {
 		this.zip_code = zip_code;
 	}
 	
-	public String getAddress() {
-		return this.address1 + ", " + this.city + ", " + this.state + " " + this.zip_code;
-	}
 }

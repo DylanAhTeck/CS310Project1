@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * Servlet implementation class SpoonacularApi
+ * Handles communication with the Spoonacular api;
  */
 public class SpoonacularApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -32,6 +33,11 @@ public class SpoonacularApi extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    /*
+     * This helper function retrieves the specific information on
+     * a recipe from its id. Combines those into an array
+     * of recipes and returns to client.
+     */
     public String getRecipeApiResultsHelper(ArrayList<String> ids) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -44,14 +50,12 @@ public class SpoonacularApi extends HttpServlet {
     			idText += "%2C";
     		}
     	}
-    	System.out.println(idText);
     	String url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/informationBulk?ids=" + idText;
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		con.setRequestProperty("X-RapidAPI-Key", "0338cd7961msh20c35cdb444b4aap17b509jsn7f4c40a7e81a");
 		int responseCode = con.getResponseCode();
-		System.out.println(responseCode);
 		if(responseCode == 200) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -60,7 +64,6 @@ public class SpoonacularApi extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
-			System.out.println(resp.toString());
 			JsonArray json = new Gson().fromJson(resp.toString(), JsonArray.class);
 			Type listType = new TypeToken<ArrayList<Recipe>>() {
 		    }.getType();
@@ -69,19 +72,22 @@ public class SpoonacularApi extends HttpServlet {
 		}
 		return "Failed to reach api";
     }
+    /*
+     * This method calls to the Spoonacular Api with a query and search size
+     * grabs a list of recipe ids based off the search query. Then calls the
+     * helper function above to get the recipe details.
+     */
     public String getRecipeApiResults(String query, String size) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
 		String url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?number="+size+"&query="+query;
-		System.out.println(url);
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		con.setRequestProperty("X-RapidAPI-Key", "0338cd7961msh20c35cdb444b4aap17b509jsn7f4c40a7e81a");
 		int responseCode = con.getResponseCode();
-		System.out.println(responseCode);
 		if(responseCode == 200) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -90,7 +96,6 @@ public class SpoonacularApi extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
-			System.out.println("Spoonacular recipe ids = " + resp.toString());
 			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
 			JsonArray recipeIds = json.getAsJsonArray("results");
 			ArrayList<String> ids = new ArrayList<String>();
@@ -119,7 +124,7 @@ public class SpoonacularApi extends HttpServlet {
 		String size = request.getParameter("size");
 		System.out.println("Making request to Spoonacular for " + query);
 		
-		response.getWriter().print(getRecipeApiResults(query, size));
+		response.getWriter().print(getRecipeApiResults(query, "50"));
 	}
 
 	/**

@@ -15,7 +15,7 @@ $.getParams = function() {
 	name = decodeURI($.urlParam('name'));
 	address = decodeURI($.urlParam('address'));
 	phone = decodeURI($.urlParam('phone'));
-	website = decodeURI($.urlParam('website'));
+	website = decodeURIComponent($.urlParam('website'));
 }
 
 //function to render the recipe details

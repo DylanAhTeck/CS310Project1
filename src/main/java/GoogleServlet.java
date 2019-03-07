@@ -19,6 +19,9 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * Servlet implementation class GoogleServlet
+ * This servlet handles communication with the Google
+ * Custom Search Api to get the top 10 images
+ * for a search query.
  */
 public class GoogleServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -31,15 +34,21 @@ public class GoogleServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     public String getImageResults(String query) throws IOException {
+    	if(query == "") { //If search query is empty return empty query
+    		return "empty query";
+    	}
     	String key ="AIzaSyAt6nXH8XR1AUDEn3nP4WmfxsjuOaNU4-U";
     	String cx = "017921781541195813540:qxb5prra6vs";
-    	Gson gson = new Gson();
+    	//URL to reach google api
 		String url = "https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&q="+query+"&searchType=image&num=10";
+		
+		//Creating a HTTP Request
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-		if(responseCode == 200) {
+		
+		if(responseCode == 200) { //If response is 200, continue
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
 			StringBuffer resp = new StringBuffer();
@@ -47,12 +56,7 @@ public class GoogleServlet extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
-			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
-			return resp.toString();
-			/*Type listType = new TypeToken<List<Restaurant>>() {
-		    }.getType();
-			List<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-			return gson.toJson(restaurants);*/
+			return resp.toString(); //Return the response to the client.
 		}
 		return "Failed to reach Yelp";
     }
@@ -63,7 +67,7 @@ public class GoogleServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
-	    String query = request.getParameter("query");
+	    String query = request.getParameter("query"); //Get the Search Query
 	    response.getWriter().print(getImageResults(query));
 	}
 

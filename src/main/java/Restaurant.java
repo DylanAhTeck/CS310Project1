@@ -1,4 +1,8 @@
-
+/*
+ * Restaurant class to handle the conversion of
+ * gson Json to restaurant class.
+ * Constructors primarily there for testing.
+ */
 public class Restaurant {
 	String alias;
 	String name;
@@ -18,32 +22,10 @@ public class Restaurant {
 		this.price = price;
 		this.phone = phone;
 		this.url = url;
-		
 	}
 	
-	public String getName() {
-		return this.name;
+	//constructor only for testing purposes
+	public Restaurant(String name) {
+		this.name = name;
 	}
-	
-	public int getRatins() {
-		return this.rating;
-	}
-	
-	public float getDistance() {
-		return this.distance;
-	}
-	
-	public String getPrice() {
-		return this.price;
-	}
-	
-	public String getPhone() {
-		return this.phone;
-	}
-	
-	public String getUrl() {
-		return this.url;
-	}
-	
-	
 }
