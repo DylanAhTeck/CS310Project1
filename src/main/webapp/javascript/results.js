@@ -159,7 +159,7 @@ var selectedList = '';
 					    		var name = "name=" + item.name +"&";
 					    		var address = "address=" + $.getAddress(item.location) + "&";
 					    		var phone = "phone=" + item.phone + "&";
-					    		var link = encodeURIComponent(item.url);
+					    		var link = encodeURI(item.url);
 					    		console.log(link);
 					    		var website = "website=" + link;
 					    		var url =  "./restaurant.html?" + id + name + address + phone + website;
@@ -193,6 +193,7 @@ var selectedList = '';
 		//Making ajax request to YelpApi
 		  var q = $.urlParam('query'); //get search query
 		  var s = $.urlParam('size'); //get number of results 
+		  $('#loader').append('<progress class="progress is-info" max="100">60%</progress>');
 		  
 		  $.post("./SpoonacularApi",
 				  {
@@ -200,9 +201,43 @@ var selectedList = '';
 					  size: s,
 				  },
 				  function(data, status){
-				
+				  $.post("./ListServlet",
+						  {
+					  		'function': 'return', 
+					  		'list' : 'do-not-show',
+					  		'type' : 'restaurant',
+					  		 
+						  },						  
+						  function(dnsArray){
+							  data.forEach(function(item, i) {
+								  dnsArray.forEach(function(dnsItems) {			  
+									  if (item.title == dnsItems.title)
+										  {
+										  console.log('in here. i: ' + i)
+										  console.log('item name' + item.title)
+									      console.log('dns name ' + dnsItems.title)
+										  data.splice(i,1);
+										  }
+						  })})})
+					 $.post("./ListServlet",
+					  {
+				  		'function': 'return', 
+				  		'list' : 'favorites',
+				  		'type' : 'restaurant',
+				  		 
+					  },						  
+					  function(favArray){
+						  data.forEach(function(item, i) {
+							  favArray.forEach(function(favItems) {									 
+								  if (item.title == fav.title)
+									  {
+									  data.splice(i,1);
+									  data.unshift(item);
+									  }
+					  })})})
+					  $('#loader').remove();
 					    data.forEach(function(item, i) {
-					    	
+					    	if(i >= s) {return};
 					    	var color = '';
 					    	if(i%2 != 0) { //if index is odd make it gray
 					    		color = 'has-background-white-ter'

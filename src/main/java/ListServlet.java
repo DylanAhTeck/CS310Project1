@@ -30,6 +30,8 @@ public class ListServlet extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    
+    
   
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -67,8 +69,6 @@ public class ListServlet extends HttpServlet {
 		List l = (List) session.getAttribute(list); 
 		//System.out.println("this is recipe: " + t)
 		List mtl = (List) session.getAttribute(moveToList); 
-	
-	
 		
 		if(type.equals("recipe"))
 		{

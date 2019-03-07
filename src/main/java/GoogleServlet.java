@@ -31,6 +31,9 @@ public class GoogleServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     public String getImageResults(String query) throws IOException {
+    	if(query == "") {
+    		return "empty query";
+    	}
     	String key ="AIzaSyAt6nXH8XR1AUDEn3nP4WmfxsjuOaNU4-U";
     	String cx = "017921781541195813540:qxb5prra6vs";
     	Gson gson = new Gson();
@@ -47,12 +50,7 @@ public class GoogleServlet extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
-			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
 			return resp.toString();
-			/*Type listType = new TypeToken<List<Restaurant>>() {
-		    }.getType();
-			List<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-			return gson.toJson(restaurants);*/
 		}
 		return "Failed to reach Yelp";
     }

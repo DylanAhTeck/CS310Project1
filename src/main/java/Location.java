@@ -18,7 +18,4 @@ public class Location {
 		this.zip_code = zip_code;
 	}
 	
-	public String getAddress() {
-		return this.address1 + ", " + this.city + ", " + this.state + " " + this.zip_code;
-	}
 }
