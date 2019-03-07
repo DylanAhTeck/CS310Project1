@@ -1,4 +1,7 @@
-
+/*
+ * This class is primarily here for
+ * handling the Gson parse to the Restaurant class.
+ */
 public class Location {
 	String city;
 	String country;

@@ -19,6 +19,9 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * Servlet implementation class List
+ * Handles the communication between
+ * client and server and managing
+ * the predefined lists.
  */
 public class ListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -43,7 +46,6 @@ public class ListServlet extends HttpServlet {
 
 		
 		String jsonResult = request.getParameter("item");
-		System.out.println("jsonResult: " + jsonResult);
 		
 		Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -51,8 +53,7 @@ public class ListServlet extends HttpServlet {
                 .create();
 		
 		JsonObject json = new Gson().fromJson(jsonResult, JsonObject.class); 
-		System.out.println("this is json: " + json);
-		
+		//Get the parameters from the AJAX request
 		String type = request.getParameter("type"); 
 		String function = request.getParameter("function");
 		String list = request.getParameter("list");
@@ -60,17 +61,17 @@ public class ListServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession();
 		
-		
+		//Create the predefined list if its users first time
 		if(session.getAttribute("favorites") == null) session.setAttribute("favorites", new List("favorites"));
 		if(session.getAttribute("do-not-show") == null) session.setAttribute("do-not-show", new List("do-not-show"));
 		if(session.getAttribute("explore") == null) session.setAttribute("explore", new List("explore"));
 		
 
 		List l = (List) session.getAttribute(list); 
-		//System.out.println("this is recipe: " + t)
+		
 		List mtl = (List) session.getAttribute(moveToList); 
 		
-		if(type.equals("recipe"))
+		if(type.equals("recipe")) //If statement to handle adding, removing, or moving a recipe
 		{
 			Recipe recipe = gson.fromJson(json, Recipe.class);
 			
@@ -84,7 +85,7 @@ public class ListServlet extends HttpServlet {
 				response.getWriter().print(gson.toJson(l.RecipeList));
 			}	
 		}
-		if(type.equals("restaurant"))
+		if(type.equals("restaurant")) //If statement to handle adding, moving, or removing a restaurant
 		{
 			Restaurant restaurant = gson.fromJson(json, Restaurant.class);
 			

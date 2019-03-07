@@ -1,4 +1,7 @@
-
+/*
+ * Ingredient class to handle each ingredient in a recipe.
+ * Mainly here to handle the Gson parse to Recipe object.
+ */
 public class Ingredient {
 	String id;
 	String name;

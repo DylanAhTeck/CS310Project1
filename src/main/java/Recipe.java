@@ -1,4 +1,8 @@
-
+/*
+ * Recipe for handling the Gson parse
+ * of the spoonacularApi data.
+ * Constructors or only there for testing purposes
+ */
 public class Recipe {
 	String preparationMinutes;
 	String cookingMinutes;

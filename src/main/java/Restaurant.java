@@ -1,4 +1,8 @@
-
+/*
+ * Restaurant class to handle the conversion of
+ * gson Json to restaurant class.
+ * Constructors primarily there for testing.
+ */
 public class Restaurant {
 	String alias;
 	String name;

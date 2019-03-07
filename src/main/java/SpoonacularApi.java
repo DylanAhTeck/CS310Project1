@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * Servlet implementation class SpoonacularApi
+ * Handles communication with the Spoonacular api;
  */
 public class SpoonacularApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -32,6 +33,11 @@ public class SpoonacularApi extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    /*
+     * This helper function retrieves the specific information on
+     * a recipe from its id. Combines those into an array
+     * of recipes and returns to client.
+     */
     public String getRecipeApiResultsHelper(ArrayList<String> ids) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -66,6 +72,11 @@ public class SpoonacularApi extends HttpServlet {
 		}
 		return "Failed to reach api";
     }
+    /*
+     * This method calls to the Spoonacular Api with a query and search size
+     * grabs a list of recipe ids based off the search query. Then calls the
+     * helper function above to get the recipe details.
+     */
     public String getRecipeApiResults(String query, String size) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()

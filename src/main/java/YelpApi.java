@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 
 /**
  * Servlet implementation class SearchServlet
+ * This servler handles
+ * communication with the yelpApi.
  */
 public class YelpApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -34,18 +36,26 @@ public class YelpApi extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-    
+    /*
+     * This helper function creates an http request to the yelp api
+     * to get a list of restaurants based off query, and size.
+     */
     public String getYelpApiResults(String query, String size) throws IOException {
     	Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
+    	//Url to reach the yelp api
 		String url = "https://api.yelp.com/v3/businesses/search?location=801%20Childs%20Way,%20Los%20Angeles,%20CA%2090089&term="+ query + "&sort_by=distance&limit=50";
+		
+		//Creating the http request.
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		con.setRequestProperty("Authorization", "Bearer vA1w5vh_CQ8cDc_ro1pu9E_7fHDhQqeUUfn5f7sNKEE9ib3akOutyXVU4o9SpMGPk11y_B7hv9zTAiytKRknZpP6g9s1Klnc7TnpQqlnDIPs1qx3pPy-qRpKfNp1XHYx");
 		int responseCode = con.getResponseCode();
+		
+		//If the response was good
 		if(responseCode == 200) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -54,12 +64,12 @@ public class YelpApi extends HttpServlet {
 				resp.append(inputLine);
 			}
 			in.close();
-			
+			//Create a list of restaurants
 			JsonObject json = new Gson().fromJson(resp.toString(), JsonObject.class);
 			Type listType = new TypeToken<ArrayList<Restaurant>>() {
 		    }.getType();
 			ArrayList<Restaurant> restaurants = gson.fromJson(json.getAsJsonArray("businesses"), listType);
-		
+			//Return a list of restaurants
 			return gson.toJson(restaurants);
 		}
 		return "Failed to reach Yelp";
