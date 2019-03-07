@@ -14,12 +14,7 @@
                         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-<<<<<<< HEAD
                 
-=======
-                        
-        
->>>>>>> 6b80a8b80e4460c791f4520787c560645a883be3
         <property name="context-root" value="CSCI310Project1"/>
                         
         
