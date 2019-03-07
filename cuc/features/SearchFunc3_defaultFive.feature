@@ -1,5 +1,5 @@
-Feature: Search Page Functionality 3
+Feature: Search Page Functionality 
 Scenario: Text box with default value of five
-Given user is in Search Page
-Then display a text box
-And default value is 5
+Given the user is in Search Page 3
+Then it should display a text box
+And the default value should be 5
