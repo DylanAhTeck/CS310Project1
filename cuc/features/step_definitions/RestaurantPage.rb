@@ -26,11 +26,21 @@ end
 Then(/^the user will be directed to Google Maps directions page$/) do
   expect(page).to have_title("Tommy Trojan to 3607 Trousdale Pkwy, Los Angeles, CA 90089 - Google Maps")
 end
-And(/^the destination is prefilled with the address of the restaurant$/) do
-  expect(page).to have_title("Tommy Trojan to 3607 Trousdale Pkwy, Los Angeles, CA 90089 - Google Maps")
+
+Given(/^the user is in Restaurant Page 1b$/) do
+  visit "http://localhost:8080/CSCI310Project1/index.html"
+  fill_in 'query', with: 'Chinese'
+  page.find(".btn").click
+  page.find_by_id("restaurants").find('.card', match: :first).find('.card-content').click
 end
-And(/^the starting point is prefilled as Tommy Trojan$/) do
-  expect(page).to have_title("Tommy Trojan to 3607 Trousdale Pkwy, Los Angeles, CA 90089 - Google Maps")
+And(/^the website link of the restaurant is valid$/) do
+  expect(page).to have_css("#restaurant-link")
+end
+When(/^the user clicks website link of the restaurant$/) do
+  page.find_by_id("restaurant-link").click
+end
+Then(/^the user will be directed to the restaurant’s home page$/) do
+  expect(page).to have_url("http://localhost:8080/CSCI310Project1/https%3A%2F%2Fwww.yelp.com%2Fbiz%2Fpanda-express-los-angeles-27%3Fadjust_creative%3Dptmh1J_WwIl-nsPuODg88Q%26utm_campaign%3Dyelp_api_v3%26utm_medium%3Dapi_v3_business_search%26utm_source%3Dptmh1J_WwIl-nsPuODg88Q")
 end
 
 Given(/^the user is in Restaurant Page 2$/) do
@@ -69,7 +79,7 @@ Then(/^display a drop down box 4$/) do
   page.find('.dropdown')
 end
 And(/^default value for it will be empty 4$/) do
-  page.find('.dropdown')
+  expect(page).to have_select("dropdown", selected: "")
 end
 
 Given(/^the user is in Restaurant Page 5$/) do
@@ -79,7 +89,7 @@ Given(/^the user is in Restaurant Page 5$/) do
   page.find_by_id("restaurants").find('.card', match: :first).find('.card-content').click
 end
 And(/^a list is selected from the drop down menu 5$/) do
-  page.find('.dropdown-trigger').click
+  select "Explore", :from => "dropdown"
 end
 When(/^the "Add to List" Button is clicked$/) do
   page.find('.dropdown-trigger').click

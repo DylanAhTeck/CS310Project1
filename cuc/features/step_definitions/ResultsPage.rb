@@ -111,46 +111,6 @@ Then(/^the user should be directed to the Recipe Page$/) do
   expect(page).to have_title("ImHungry | Recipe")
 end
 
-Given(/^the user is in Results Page 7a$/) do
-  visit "http://localhost:8080/CSCI310Project1/index.html"
-    fill_in 'query', with: 'Chinese'
-    page.find(".btn").click
-end
-And(/^the user selects a predefined list from the drop down menu$/) do
-  select "Explore", :from => "dropdown"
-end
-When(/^the user clicks the "Add to List" button on the result$/) do
-  page.find_by_id("recipes")
-  "qioheioqweoqwei How the add to list method works?"
-end
-Then(/^the result should be added to the selected list$/) do
-  page.find_by_id("recipes")
-end
-
-Given(/^the user is in Results Page 7b$/) do
-  visit "http://localhost:8080/CSCI310Project1/index.html"
-    fill_in 'query', with: 'Chinese'
-    page.find(".btn").click
-end
-When(/^a result is in the favorite list$/) do
-  
-end
-Then(/^the result should be ranked ahead of all items not in the favorite list$/) do
-  
-end
-
-Given(/^the user is in Results Page 7c$/) do
-  visit "http://localhost:8080/CSCI310Project1/index.html"
-    fill_in 'query', with: 'Chinese'
-    page.find(".btn").click
-end
-When(/^a result is in the Do-Not-Show list$/) do
-  
-end
-Then(/^the result should not appear in the Results Page$/) do
-  
-end
-
 Given(/^the user is in Results Page 8$/) do
   visit "http://localhost:8080/CSCI310Project1/results.html"
 end
@@ -180,32 +140,29 @@ Given(/^the user is in the Search Page App 3c$/) do
     page.find(".btn").click
 end
 And(/^the Search Page displays the photo collage of the search term$/) do
-  page.find(".is-four-fifths")
+  page.find(".image-container")
 end
 Then(/^the photo collage should be in rectangular shape$/) do
-  
+  page.find(".columns")
 end
 And(/^the size of the collage must be between 40 and 60% of the browser viewport width, and the height must be between 35 and 50% of the browser viewport height$/) do
-  
+  page.find(".is-multiline")
 end
 
-Given(/^the user is in the Search Page App 3p$/) do
+Given(/^the user is in the Search Page APP 3p$/) do
   visit "http://localhost:8080/CSCI310Project1/index.html"
     fill_in 'query', with: 'Chinese'
     page.find(".btn").click
 end
 And(/^the Search Page displays the photo collage of the search term$/) do
-  page.find(".is-four-fifths")
+  page.find_by_id(".image0")
 end
-Then(/^the photos should be from the results of performing a Google image search with the search term and using the top 10 photos returned in the results$/) do
-  
-end
-And(/^there is no photo frames for individual photos$/) do
-  
+Then(/^there is no photo frames for individual photos$/) do
+  page.find(".food-image")
 end
 And(/^all photos should be scaled to fit within the space allocated for the collage$/) do
-  
+  page.find(".image-container").find(".food-image")
 end
 And(/^photos should be displayed in the collage with a random rotation of -45 to 45 degrees$/) do
-  
+  expext(page.find(".image-container").find(".food-image")).to have_css("#style")
 end
